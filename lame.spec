@@ -1,3 +1,7 @@
+
+# conditional build
+#  _without_gtk
+
 Summary:	Software to create compressed audio files
 Summary(es):	Lame es un gerador de MP3
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
@@ -12,7 +16,7 @@ Patch0:		%{name}-glibc.patch
 Patch1:		%{name}-ifdef.patch
 URL:		http://www.mp3dev.org/mp3/
 BuildRequires:	autoconf
-BuildRequires:	gtk+-devel >= 1.2.0
+%{!?_without_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 BuildRequires:	libogg-devel
 BuildRequires:	nasm
 BuildRequires:	ncurses-devel => 4.2
@@ -108,7 +112,7 @@ Analizator ramek w GTK.
 %configure \
 	--enable-shared \
 	--enable-static \
-	--enable-mp3x \
+%{!?_without_gtk:--enable-mp3x} \
 	--enable-mp3rtp \
 	--enable-brhist
 %{__make}
@@ -120,7 +124,7 @@ install -d $RPM_BUILD_ROOT%{_xbindir}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-mv -f $RPM_BUILD_ROOT{%{_bindir}/mp3x,%{_xbindir}}
+%{!?_without_gtk:mv -f $RPM_BUILD_ROOT{%{_bindir}/mp3x,%{_xbindir}}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -151,6 +155,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 
+%if {!?_without_gtk:1}0
 %files x11
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_xbindir}/*
+%endif
