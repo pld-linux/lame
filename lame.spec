@@ -59,7 +59,7 @@ Summary(es):	Archivos para desarrollo
 Summary(pl):	Pliki nag³ówkowe i dokumentacja developerska
 Summary(pt_BR):	Arquivos para desenvolvimento
 Group:		Development/Libraries
-Requires:	lame-libs = %{version}
+Requires:	lame-libs = %{version}-%{release}
 
 %description libs-devel
 Header files and devel documentation for LAME libraries.
@@ -79,7 +79,7 @@ Summary(es):	Bibliotecas estaticas de desarrollo
 Summary(pl):	Biblioteki statyczne LAME
 Summary(pt_BR):	Bibliotecas estáticas de desenvolvimento
 Group:		Development/Libraries
-Requires:	lame-libs-devel = %{version}
+Requires:	lame-libs-devel = %{version}-%{release}
 
 %description libs-static
 LAME static libraries.
@@ -97,7 +97,7 @@ Bibliotecas estáticas de desenvolvimento.
 Summary:	GTK frame analyzer
 Summary(pl):	Analizator ramek w GTK
 Group:		Applications/Sound
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description x11
 GTK frame analyzer.
