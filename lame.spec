@@ -26,7 +26,7 @@ Stworzone pliki mo¿na odtwarzaæ dekoderami MP3, np.: mpg123.
 %patch0 -p1
 
 %build
-make CC_OPTS="$RPM_OPT_FLAGS -I%{_includedir}/ncurses"
+%{__make} CC_OPTS="$RPM_OPT_FLAGS -I%{_includedir}/ncurses"
 
 %install
 rm -rf $RPM_BUILD_ROOT
