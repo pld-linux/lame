@@ -11,11 +11,11 @@ Source0:	http://telia.dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-glibc.patch
 Patch1:		%{name}-ifdef.patch
 URL:		http://www.mp3dev.org/mp3/
-BuildRequires:	ncurses-devel => 4.2
+BuildRequires:	autoconf
 BuildRequires:	gtk+-devel >= 1.2.0
 BuildRequires:	libogg-devel
 BuildRequires:	nasm
-BuildRequires:	autoconf
+BuildRequires:	ncurses-devel => 4.2
 Requires:	lame-libs = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -123,8 +123,6 @@ install -d $RPM_BUILD_ROOT%{_xbindir}
 mv -f	$RPM_BUILD_ROOT%{_bindir}/mp3x \
 	$RPM_BUILD_ROOT%{_xbindir}
 
-gzip -9nf Change* API DEFINES LICENSE TODO USAGE
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -133,20 +131,19 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc doc/html/*.{html,css}
-%doc {TODO,USAGE}.gz
+%doc ChangeLog TODO USAGE doc/html/*.{html,css}
 %attr(755,root,root) %{_bindir}/lame
 %attr(755,root,root) %{_bindir}/mp3rtp
 %{_mandir}/man1/lame.1*
 
 %files libs
 %defattr(644,root,root,755)
-%doc LICENSE.gz
+%doc LICENSE
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
 %files libs-devel
 %defattr(644,root,root,755)
-%doc {API,DEFINES}.gz
+%doc API DEFINES
 %attr(755,root,root) %{_libdir}/lib*.so
 %attr(755,root,root) %{_libdir}/lib*.la
 %{_includedir}/lame
