@@ -29,7 +29,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Lame is a program which can be used to create compressed audio files.
 (Lame aint MP3 encoder). These audio files can be played back by
-popular mp3 players such as mpg123.
+popular MP3 players such as mpg123.
 
 %description -l es
 LAME es un encoder MP3 GPL.
@@ -43,12 +43,12 @@ Stworzone pliki mo¿na odtwarzaæ dekoderami MP3, np.: mpg123.
 LAME é um encoder MP3 GPL.
 
 %package libs
-Summary:	LAME mp3 encoding library
+Summary:	LAME MP3 encoding library
 Summary(pl):	Biblioteka koduj±ca MP3 LAME
 Group:		Libraries
 
 %description libs
-LAME mp3 encoding library.
+LAME MP3 encoding library.
 
 %description libs -l pl
 Biblioteka koduj±ca MP3 LAME.
