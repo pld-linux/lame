@@ -26,6 +26,8 @@ BuildRequires:	ncurses-devel >= 4.2
 Requires:	%{name}-libs = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_xbindir	/usr/X11R6/bin
+
 %description
 Lame is a program which can be used to create compressed audio files.
 (Lame aint MP3 encoder). These audio files can be played back by
@@ -127,9 +129,12 @@ Analizator ramek w GTK.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_xbindir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+mv -f $RPM_BUILD_ROOT{%{_bindir}/mp3x,%{_xbindir}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -163,5 +168,5 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with gtk}
 %files x11
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/mp3x
+%attr(755,root,root) %{_xbindir}/mp3x
 %endif
