@@ -104,7 +104,7 @@ Analizator ramek w GTK.
 %patch0 -p1
 
 %build
-autoconf
+%{__autoconf}
 %configure \
 	--enable-shared \
 	--enable-static \
