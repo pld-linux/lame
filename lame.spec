@@ -127,7 +127,6 @@ Analizator ramek w GTK.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_xbindir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
