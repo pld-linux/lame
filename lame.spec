@@ -13,6 +13,7 @@ License:	GPL
 Group:		Applications/Sound
 Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-link.patch
+Patch1:		%{name}-without_gtk.patch
 URL:		http://www.mp3dev.org/mp3/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -107,6 +108,7 @@ Analizator ramek w GTK.
 %prep
 %setup -q
 %patch0 -p1
+%{?_without_gtk:%patch1 -p1}
 
 %build
 %{__libtoolize}
