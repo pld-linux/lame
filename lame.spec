@@ -1,8 +1,8 @@
 Summary:	Software to create compressed audio files
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Name:		lame
-Version:	3.88
-Release:	2
+Version:	3.89
+Release:	1
 License:	GPL
 Group:		Applications/Sound
 Group(de):	Applikationen/Laut
