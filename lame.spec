@@ -1,5 +1,7 @@
 Summary:	Software to create compressed audio files
+Summary(es):	Lame es un gerador de MP3
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
+Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
 Version:	3.91
 Release:	1
@@ -23,10 +25,16 @@ Lame is a program which can be used to create compressed audio files.
 (Lame aint MP3 encoder). These audio files can be played back by
 popular mp3 players such as mpg123.
 
+%description -l es
+LAME es un encoder MP3 GPL.
+
 %description -l pl
 Lame jest programem, który s³u¿y do tworzenia skompresowanych plików
 d¼wiêkowych. (Lame nie jest programem do kompresji w formacie MP3).
 Stworzone pliki mo¿na odtwarzaæ dekoderami MP3, np.: mpg123.
+
+%description -l pt_BR
+LAME é um encoder MP3 GPL.
 
 %package libs
 Summary:	LAME mp3 encoding library
@@ -44,7 +52,9 @@ Biblioteka enkoduj±ca MP3 LAME.
 
 %package libs-devel
 Summary:	Header files and devel documentation
+Summary(es):	Archivos para desarrollo
 Summary(pl):	Pliki nag³ówkowe i dokumentacja developerska
+Summary(pt_BR):	Arquivos para desenvolvimento
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
@@ -54,12 +64,20 @@ Requires:	lame-libs = %{version}
 %description libs-devel
 Header files and devel documentation for LAME libraries.
 
+%description -l es libs-devel
+Archivos de desarrolo
+
 %description -l pl libs-devel
 Pliki nag³ówkowe i dokumentacja developerska bibliotek LAME.
 
+%description -l pt_BR libs-devel
+Arquivos de desenvolvimento
+
 %package libs-static
 Summary:	Static LAME library
+Summary(es):	Bibliotecas estaticas de desarrollo
 Summary(pl):	Biblioteki statyczne LAME
+Summary(pt_BR):	Bibliotecas estáticas de desenvolvimento
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
@@ -69,8 +87,14 @@ Requires:	lame-libs-devel = %{version}
 %description libs-static
 LAME static libraries.
 
+%description -l es libs-static
+Bibliotecas estaticas de desarrollo
+
 %description -l pl libs-static
 Biblioteki statyczne LAME.
+
+%description -l pt_BR libs-static
+Bibliotecas estáticas de desenvolvimento
 
 %package x11
 Summary:	GTK frame analyzer
