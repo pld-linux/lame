@@ -12,9 +12,9 @@ Buildrequires:	ncurses-devel => 4.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Lame is a program which can be used to create compressed audio files. (Lame
-aint MP3 encoder). These audio files can be played back by popular mp3
-players such as mpg123.
+Lame is a program which can be used to create compressed audio files.
+(Lame aint MP3 encoder). These audio files can be played back by
+popular mp3 players such as mpg123.
 
 %description -l pl
 Lame jest programem, który s³u¿y do tworzenia skompresowanych plików
