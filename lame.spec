@@ -124,7 +124,7 @@ install -d $RPM_BUILD_ROOT%{_xbindir}
 mv -f	$RPM_BUILD_ROOT%{_bindir}/mp3x \
 	$RPM_BUILD_ROOT%{_xbindir}
 
-gzip -9nf Change* API DEFINES LICENSE TODO USAGE 
+gzip -9nf Change* API DEFINES LICENSE TODO USAGE
 
 %clean
 rm -rf $RPM_BUILD_ROOT
