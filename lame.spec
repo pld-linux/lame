@@ -94,16 +94,16 @@ Biblioteki statyczne LAME.
 Bibliotecas estáticas de desenvolvimento.
 
 %package x11
-Summary:	GTK frame analyzer
-Summary(pl):	Analizator ramek w GTK
+Summary:	GTK+ frame analyzer
+Summary(pl):	Analizator ramek w GTK+
 Group:		Applications/Sound
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description x11
-GTK frame analyzer.
+GTK+ frame analyzer.
 
 %description x11 -l pl
-Analizator ramek w GTK.
+Analizator ramek w GTK+.
 
 %prep
 %setup -q
