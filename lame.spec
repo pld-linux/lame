@@ -26,8 +26,8 @@ d¼wiêkowych. (Lame nie jest programem do kompresji w formacie MP3).
 Stworzone pliki mo¿na odtwarzaæ dekoderami MP3, np.: mpg123.
 
 %package libs
-Summary:	LAME mp3 encoding library.
-Summary(pl):	Biblioteka enkoduj±ca MP3 LAME.
+Summary:	LAME mp3 encoding library
+Summary(pl):	Biblioteka enkoduj±ca MP3 LAME
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
@@ -41,7 +41,7 @@ Biblioteka enkoduj±ca MP3 LAME.
 
 %package libs-devel
 Summary:	Header files and devel documentation
-Summary(pl):	Pliki nag³ówkowe i dokumentacja developerska.
+Summary(pl):	Pliki nag³ówkowe i dokumentacja developerska
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
@@ -55,8 +55,8 @@ Header files and devel documentation for LAME libraries.
 Pliki nag³ówkowe i dokumentacja developerska bibliotek LAME.
 
 %package libs-static
-Summary:	Static LAME library.
-Summary(pl):	Biblioteki statyczne LAME.
+Summary:	Static LAME library
+Summary(pl):	Biblioteki statyczne LAME
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
@@ -70,8 +70,8 @@ LAME static libraries.
 Biblioteki statyczne LAME.
 
 %package x11
-Summary:	GTK frame analyzer.
-Summary(pl):	Analizator ramek w GTK.
+Summary:	GTK frame analyzer
+Summary(pl):	Analizator ramek w GTK
 Group:		Applications/Sound
 Group(de):	Applikationen/Laut
 Group(pl):	Aplikacje/D¼wiêk
@@ -100,6 +100,7 @@ install -d $RPM_BUILD_ROOT%{_prefix}/X11R6/bin
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
 mv	$RPM_BUILD_ROOT%{_bindir}/mp3x \
 	$RPM_BUILD_ROOT%{_prefix}/X11R6/bin/
 
@@ -108,7 +109,7 @@ gzip -9nf Change* API DEFINES LICENSE TODO USAGE
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post libs -p /sbin/ldconfig
+%post   libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
 %files
