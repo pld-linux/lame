@@ -4,7 +4,7 @@ Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
 Version:	3.92
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Sound
 Source0:	http://telia.dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
@@ -120,8 +120,7 @@ install -d $RPM_BUILD_ROOT%{_xbindir}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-mv -f	$RPM_BUILD_ROOT%{_bindir}/mp3x \
-	$RPM_BUILD_ROOT%{_xbindir}
+mv -f $RPM_BUILD_ROOT{%{_bindir}/mp3x,%{_xbindir}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
