@@ -1,26 +1,26 @@
-
-# conditional build
-#  _without_gtk
-
+#
+# Conditional build:
+# _without_gtk	- without GTK+ frontend
+#
 Summary:	Software to create compressed audio files
 Summary(es):	Lame es un gerador de MP3
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.92
-Release:	2
+Version:	3.93.1
+Release:	1
 License:	GPL
 Group:		Applications/Sound
-Source0:	http://telia.dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
-Patch0:		%{name}-glibc.patch
-Patch1:		%{name}-ifdef.patch
+Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/lame/%{name}-%{version}.tar.gz
+Patch0:		%{name}-link.patch
 URL:		http://www.mp3dev.org/mp3/
 BuildRequires:	autoconf
+BuildRequires:	automake
 %{!?_without_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
-BuildRequires:	libogg-devel
+BuildRequires:	libtool
 BuildRequires:	nasm
 BuildRequires:	ncurses-devel => 4.2
-Requires:	lame-libs = %{version}
+Requires:	%{name}-libs = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_xbindir	/usr/X11R6/bin
@@ -44,7 +44,7 @@ LAME é um encoder MP3 GPL.
 %package libs
 Summary:	LAME mp3 encoding library
 Summary(pl):	Biblioteka koduj±ca MP3 LAME
-Group:		Development/Libraries
+Group:		Libraries
 
 %description libs
 LAME mp3 encoding library.
@@ -96,6 +96,7 @@ Bibliotecas estáticas de desenvolvimento.
 Summary:	GTK frame analyzer
 Summary(pl):	Analizator ramek w GTK
 Group:		Applications/Sound
+Requires:	%{name}-libs = %{version}
 
 %description x11
 GTK frame analyzer.
@@ -108,13 +109,17 @@ Analizator ramek w GTK.
 %patch0 -p1
 
 %build
+%{__libtoolize}
+%{__aclocal}
 %{__autoconf}
+%{__automake}
 %configure \
 	--enable-shared \
 	--enable-static \
 %{!?_without_gtk:--enable-mp3x} \
 	--enable-mp3rtp \
 	--enable-brhist
+
 %{__make}
 
 %install
@@ -155,8 +160,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 
-%if {!?_without_gtk:1}0
+%if 0%{!?_without_gtk:1}
 %files x11
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_xbindir}/*
+%attr(755,root,root) %{_xbindir}/mp3x
 %endif
