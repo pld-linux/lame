@@ -11,7 +11,7 @@ Version:	3.93.1
 Release:	1
 License:	GPL
 Group:		Applications/Sound
-Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/lame/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 URL:		http://www.mp3dev.org/mp3/
