@@ -1,0 +1,28 @@
+diff -Nru lame-3.93.1.orig/configure.in lame-3.93.1/configure.in
+--- lame-3.93.1.orig/configure.in	Sun Dec  1 17:15:34 2002
++++ lame-3.93.1/configure.in	Wed Jan 22 20:28:02 2003
+@@ -333,11 +333,7 @@
+ 
+ dnl configure use of features
+ 
+-AM_PATH_GTK(1.2.0, HAVE_GTK="yes", HAVE_GTK="no")
+-if test "${HAVE_GTK}" = "yes"; then
+-	AC_DEFINE(HAVE_GTK, 1, have working GTK)
+-fi
+-
++HAVE_GTK=no
+ 
+ dnl ElectricFence malloc debugging
+ AC_MSG_CHECKING(use of ElectricFence malloc debugging)
+diff -Nru lame-3.93.1.orig/frontend/Makefile.am lame-3.93.1/frontend/Makefile.am
+--- lame-3.93.1.orig/frontend/Makefile.am	Wed Jan 22 20:26:52 2003
++++ lame-3.93.1/frontend/Makefile.am	Wed Jan 22 20:28:15 2003
+@@ -52,7 +52,7 @@
+ mp3x__EXEEXT__SOURCES = mp3x.c gtkanal.c gpkplotting.c $(common_sources)
+ endif
+ 
+-CFLAGS = @CFLAGS@ @GTK_CFLAGS@ @FRONTEND_CFLAGS@
++CFLAGS = @CFLAGS@ @FRONTEND_CFLAGS@
+ LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@
+ 
+ INCLUDES = -I$(top_srcdir)/libmp3lame -I$(top_srcdir)/include -I$(top_builddir)
