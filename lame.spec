@@ -12,6 +12,7 @@ Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
+# Source0-md5: 1b79c08045eafc55e24ebd38d9e84329
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 URL:		http://www.mp3dev.org/mp3/
