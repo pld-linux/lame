@@ -9,7 +9,7 @@ Group(pl):	Aplikacje/D¼wiêk
 Source0:	ftp://geek.rcc.se/pub/mp3encoder/lame/%{name}%{version}.tar.gz
 Patch0:		lame-tinfo.patch
 Buildrequires:	ncurses-devel => 4.2
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Lame is a program which can be used to create compressed audio files. (Lame
