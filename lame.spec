@@ -46,7 +46,7 @@ install mlame $RPM_BUILD_ROOT%{_bindir}
 # documentation
 install doc/man/lame.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
-gzip -9nf USAGE README $RPM_BUILD_ROOT%{_mandir}/man1/lame.1
+gzip -9nf COPYING USAGE README $RPM_BUILD_ROOT%{_mandir}/man1/lame.1
 pushd doc
 mv html lame-%{version}
 tar czf lame-%{version}.tar.gz lame-%{version}
@@ -58,7 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644, root, root, 755)
-%doc {USAGE,README,lame-%{version}.tar}.gz
+%doc {COPYING,USAGE,README,lame-%{version}.tar}.gz
 %attr(755,root,root) %{_bindir}/lame
 %attr(755,root,root) %{_bindir}/auenc
 %attr(755,root,root) %{_bindir}/mlame
