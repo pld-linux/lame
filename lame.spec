@@ -7,10 +7,6 @@ Version:	3.91
 Release:	3
 License:	GPL
 Group:		Applications/Sound
-Group(de):	Applikationen/Laut
-Group(es):	Aplicaciones/Sonido
-Group(pl):	Aplikacje/D╪wiЙk
-Group(pt_BR):	AplicaГУes/Som
 Source0:	http://telia.dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-glibc.patch
 Patch1:		%{name}-ifdef.patch
@@ -45,13 +41,6 @@ LAME И um encoder MP3 GPL.
 Summary:	LAME mp3 encoding library
 Summary(pl):	Biblioteka koduj╠ca MP3 LAME
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 
 %description libs
 LAME mp3 encoding library.
@@ -65,13 +54,6 @@ Summary(es):	Archivos para desarrollo
 Summary(pl):	Pliki nagЁСwkowe i dokumentacja developerska
 Summary(pt_BR):	Arquivos para desenvolvimento
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	lame-libs = %{version}
 
 %description libs-devel
@@ -92,13 +74,6 @@ Summary(es):	Bibliotecas estaticas de desarrollo
 Summary(pl):	Biblioteki statyczne LAME
 Summary(pt_BR):	Bibliotecas estАticas de desenvolvimento
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	lame-libs-devel = %{version}
 
 %description libs-static
@@ -117,10 +92,6 @@ Bibliotecas estАticas de desenvolvimento.
 Summary:	GTK frame analyzer
 Summary(pl):	Analizator ramek w GTK
 Group:		Applications/Sound
-Group(de):	Applikationen/Laut
-Group(es):	Aplicaciones/Sonido
-Group(pl):	Aplikacje/D╪wiЙk
-Group(pt_BR):	AplicaГУes/Som
 
 %description x11
 GTK frame analyzer.
