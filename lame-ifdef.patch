@@ -1,0 +1,11 @@
+--- lame-3.91/frontend/rtp.h~	Tue Dec 19 08:43:25 2000
++++ lame-3.91/frontend/rtp.h	Fri Jan 25 19:16:05 2002
+@@ -26,7 +26,7 @@
+ int makesocket(char *szAddr,unsigned short port,unsigned char TTL,struct sockaddr_in *sSockAddr);
+ void rtp_output(const char *mp3buffer,int mp3size);
+ 
+-#ifdef 0
++#if 0
+ int rtp_send (
+     SOCKET s,
+     struct rtpheader *foo,
