@@ -1,31 +1,30 @@
 #
 # Conditional build:
-# _without_gtk	- without GTK+ frontend
+%bcond_without	gtk	# without GTK+ frontend
 #
 Summary:	Software to create compressed audio files
 Summary(es):	Lame es un gerador de MP3
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.93.1
+Version:	3.95.1
 Release:	1
 License:	GPL
 Group:		Applications/Sound
 Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
-# Source0-md5: 1b79c08045eafc55e24ebd38d9e84329
+# Source0-md5:	2cfac426cf8b7a2931db5d285ac44cf9
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
+Patch2:		%{name}-amfix.patch
 URL:		http://www.mp3dev.org/mp3/
 BuildRequires:	autoconf
 BuildRequires:	automake
-%{!?_without_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
+%{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 BuildRequires:	libtool
 BuildRequires:	nasm
-BuildRequires:	ncurses-devel => 4.2
+BuildRequires:	ncurses-devel >= 4.2
 Requires:	%{name}-libs = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_xbindir	/usr/X11R6/bin
 
 %description
 Lame is a program which can be used to create compressed audio files.
@@ -109,7 +108,8 @@ Analizator ramek w GTK.
 %prep
 %setup -q
 %patch0 -p1
-%{?_without_gtk:%patch1 -p1}
+%{!?with_gtk:%patch1 -p1}
+%patch2 -p1
 
 %build
 %{__libtoolize}
@@ -119,7 +119,7 @@ Analizator ramek w GTK.
 %configure \
 	--enable-shared \
 	--enable-static \
-%{!?_without_gtk:--enable-mp3x} \
+	%{?with_gtk:--enable-mp3x} \
 	--enable-mp3rtp \
 	--enable-brhist
 
@@ -131,8 +131,6 @@ install -d $RPM_BUILD_ROOT%{_xbindir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-%{!?_without_gtk:mv -f $RPM_BUILD_ROOT{%{_bindir}/mp3x,%{_xbindir}}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -163,8 +161,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 
-%if 0%{!?_without_gtk:1}
+%if %{with gtk}
 %files x11
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_xbindir}/mp3x
+%attr(755,root,root) %{_bindir}/mp3x
 %endif
