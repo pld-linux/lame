@@ -2,7 +2,7 @@ Summary:	Software to create compressed audio files
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Name:		lame
 Version:	3.88
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Sound
 Group(de):	Applikationen/Laut
@@ -11,7 +11,9 @@ Source0:	ftp://lame.sourceforge.net/pub/lame/src/%{name}%{version}beta.tar.gz
 URL:		http://www.mp3dev.org/mp3/
 BuildRequires:	ncurses-devel => 4.2
 BuildRequires:	gtk+-devel >= 1.2.0
+BuildRequires:	libogg-devel
 BuildRequires:	nasm
+BuildRequires:	autoconf
 Requires:	lame-libs = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -86,6 +88,7 @@ Analizator ramek w GTK.
 %setup -q
 
 %build
+autoconf
 %configure \
 	--enable-shared \
 	--enable-static \
