@@ -16,7 +16,7 @@ Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-amfix.patch
-URL:		http://www.mp3dev.org/mp3/
+URL:		http://lame.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
