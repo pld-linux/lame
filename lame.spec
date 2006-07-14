@@ -7,12 +7,13 @@ Summary(es):	Lame es un gerador de MP3
 Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.96.1
-Release:	3
+Version:	3.97
+%define _beta	b2
+Release:	0.%{_beta}.1
 License:	GPL
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
-# Source0-md5:	e1206c46a5e276feca11a7149e2fc6ac
+Source0:	http://dl.sourceforge.net/sourceforge/lame/%{name}-%{version}%{_beta}.tar.gz
+# Source0-md5:	f3109237dfa9e025a2eb23fdae338166
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-amfix.patch
@@ -106,7 +107,7 @@ GTK+ frame analyzer.
 Analizator ramek w GTK+.
 
 %prep
-%setup -q
+%setup -q -n %{name}-3.97
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
 %patch2 -p1
