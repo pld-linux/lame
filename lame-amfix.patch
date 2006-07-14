@@ -1,50 +1,15 @@
---- lame-3.95.1/frontend/Makefile.am.orig	2004-01-15 23:54:08.000000000 +0100
-+++ lame-3.95.1/frontend/Makefile.am	2004-01-16 00:02:11.369262688 +0100
-@@ -3,7 +3,7 @@
- include $(top_srcdir)/Makefile.am.global
- 
- bin_PROGRAMS = @WITH_FRONTEND@ @WITH_MP3RTP@ @WITH_MP3X@
--EXTRA_PROGRAMS = lame$(EXEEXT) mp3rtp$(EXEEXT) mp3x$(EXEEXT)
-+EXTRA_PROGRAMS = lame mp3rtp mp3x
- 
- brhist_sources = brhist.c brhist.h
- 
-@@ -37,20 +37,20 @@
+--- lame-3.97/frontend/Makefile.am~	2006-07-14 14:26:41.000000000 +0200
++++ lame-3.97/frontend/Makefile.am	2006-07-14 14:29:39.000000000 +0200
+@@ -35,9 +35,9 @@
  	portableio.h \
  	timestatus.h
  
--EXTRA_lame__EXEEXT__SOURCES = $(brhist_sources)
--EXTRA_mp3rtp__EXEEXT__SOURCES = $(brhist_sources)
--EXTRA_mp3x__EXEEXT__SOURCES = $(brhist_sources)
-+EXTRA_lame_SOURCES = $(brhist_sources)
-+EXTRA_mp3rtp_SOURCES = $(brhist_sources)
-+EXTRA_mp3x_SOURCES = $(brhist_sources)
+-## EXTRA_lame__EXEEXT__SOURCES = $(brhist_sources)
+-## EXTRA_mp3rtp__EXEEXT__SOURCES = $(brhist_sources)
+-## EXTRA_mp3x__EXEEXT__SOURCES = $(brhist_sources)
++EXTRA_lame__EXEEXT__SOURCES = $(brhist_sources)
++EXTRA_mp3rtp__EXEEXT__SOURCES = $(brhist_sources)
++EXTRA_mp3x__EXEEXT__SOURCES = $(brhist_sources)
  
  if WITH_BRHIST
--lame__EXEEXT__SOURCES = main.c $(common_sources) $(brhist_sources)
--mp3rtp__EXEEXT__SOURCES = mp3rtp.c rtp.c rtp.h $(common_sources) \
-+lame_SOURCES = main.c $(common_sources) $(brhist_sources)
-+mp3rtp_SOURCES = mp3rtp.c rtp.c rtp.h $(common_sources) \
- 	$(brhist_sources)
--mp3x__EXEEXT__SOURCES = mp3x.c gtkanal.c gpkplotting.c \
-+mp3x_SOURCES = mp3x.c gtkanal.c gpkplotting.c \
- 	$(common_sources) $(brhist_sources)
- else
--lame__EXEEXT__SOURCES = main.c $(common_sources)
--mp3rtp__EXEEXT__SOURCES = mp3rtp.c rtp.c rtp.h $(common_sources)
--mp3x__EXEEXT__SOURCES = mp3x.c gtkanal.c gpkplotting.c $(common_sources)
-+lame_SOURCES = main.c $(common_sources)
-+mp3rtp_SOURCES = mp3rtp.c rtp.c rtp.h $(common_sources)
-+mp3x_SOURCES = mp3x.c gtkanal.c gpkplotting.c $(common_sources)
- endif
- 
- CFLAGS = @CFLAGS@ @GTK_CFLAGS@ @FRONTEND_CFLAGS@
-@@ -62,7 +62,7 @@
- 	$(top_builddir)/libmp3lame/libmp3lame.la \
- 	@FRONTEND_LDADD@
- 
--mp3x__EXEEXT__LDADD = $(LDADD) @GTK_LIBS@
-+mp3x_LDADD = $(LDADD) @GTK_LIBS@
- 
- CLEANFILES = lclint.txt $(EXTRA_PROGRAMS)
- 
+ lame_SOURCES = main.c $(common_sources) $(brhist_sources)
