@@ -12,7 +12,7 @@ Version:	3.97
 Release:	0.%{_beta}.1
 License:	GPL
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/sourceforge/lame/%{name}-%{version}%{_beta}.tar.gz
+Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}%{_beta}.tar.gz
 # Source0-md5:	f3109237dfa9e025a2eb23fdae338166
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
