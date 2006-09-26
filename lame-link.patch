@@ -20,3 +20,19 @@
  
  INCLUDES = -I$(top_srcdir)/libmp3lame -I$(top_srcdir)/include -I$(top_builddir)
  
+--- lame-3.97/configure.in.orig	2006-09-24 15:53:31.000000000 +0200
++++ lame-3.97/configure.in	2006-09-26 20:31:27.993719750 +0200
+@@ -347,9 +347,10 @@
+ 
+ AC_CHECK_HEADERS(termcap.h)
+ AC_CHECK_HEADERS(ncurses/termcap.h)
+-AC_CHECK_LIB(termcap, initscr, HAVE_TERMCAP="termcap")
+-AC_CHECK_LIB(curses, initscr, HAVE_TERMCAP="curses")
+-AC_CHECK_LIB(ncurses, initscr, HAVE_TERMCAP="ncurses")
++AC_CHECK_LIB(tinfo, tgetent, HAVE_TERMCAP="tinfo", [
++  AC_CHECK_LIB(ncurses, tgetent, HAVE_TERMCAP="ncurses", [
++    AC_CHECK_LIB(curses, tgetent, HAVE_TERMCAP="curses", [
++      AC_CHECK_LIB(termcap, tgetent, HAVE_TERMCAP="termcap")])])])
+  
+ dnl math lib
+ AC_CHECK_LIB(m, cos, USE_LIBM="-lm")
