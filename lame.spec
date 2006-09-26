@@ -8,17 +8,16 @@ Summary(pl):	Program do tworzenia skompresowanych plików d¼wiêkowych
 Summary(pt_BR):	Lame é um gerador de MP3
 Name:		lame
 Version:	3.97
-%define _beta	b2
-Release:	0.%{_beta}.1
+Release:	1
 License:	GPL
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}%{_beta}.tar.gz
-# Source0-md5:	f3109237dfa9e025a2eb23fdae338166
+Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
+# Source0-md5:	90a4acbb730d150dfe80de145126eef7
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-amfix.patch
 URL:		http://lame.sourceforge.net/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 BuildRequires:	libtool
@@ -60,7 +59,7 @@ Summary(es):	Archivos para desarrollo
 Summary(pl):	Pliki nag³ówkowe i dokumentacja developerska
 Summary(pt_BR):	Arquivos para desenvolvimento
 Group:		Development/Libraries
-Requires:	lame-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description libs-devel
 Header files and devel documentation for LAME libraries.
@@ -80,7 +79,7 @@ Summary(es):	Bibliotecas estaticas de desarrollo
 Summary(pl):	Biblioteki statyczne LAME
 Summary(pt_BR):	Bibliotecas estáticas de desenvolvimento
 Group:		Development/Libraries
-Requires:	lame-libs-devel = %{version}-%{release}
+Requires:	%{name}-libs-devel = %{version}-%{release}
 
 %description libs-static
 LAME static libraries.
@@ -107,7 +106,7 @@ GTK+ frame analyzer.
 Analizator ramek w GTK+.
 
 %prep
-%setup -q -n %{name}-3.97
+%setup -q
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
 %patch2 -p1
