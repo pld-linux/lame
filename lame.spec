@@ -3,9 +3,9 @@
 %bcond_without	gtk	# without GTK+ frontend
 #
 Summary:	Software to create compressed audio files
-Summary(es):	Lame es un gerador de MP3
-Summary(pl):	Program do tworzenia skompresowanych plikÛw dºwiÍkowych
-Summary(pt_BR):	Lame È um gerador de MP3
+Summary(es.UTF-8):   Lame es un gerador de MP3
+Summary(pl.UTF-8):   Program do tworzenia skompresowanych plik√≥w d≈∫wiƒôkowych
+Summary(pt_BR.UTF-8):   Lame √© um gerador de MP3
 Name:		lame
 Version:	3.97
 Release:	2
@@ -31,78 +31,78 @@ Lame is a program which can be used to create compressed audio files.
 (Lame aint MP3 encoder). These audio files can be played back by
 popular MP3 players such as mpg123.
 
-%description -l es
+%description -l es.UTF-8
 LAME es un encoder MP3 GPL.
 
-%description -l pl
-Lame jest programem, ktÛry s≥uøy do tworzenia skompresowanych plikÛw
-dºwiÍkowych. (Lame nie jest programem do kompresji w formacie MP3).
-Stworzone pliki moøna odtwarzaÊ dekoderami MP3, np.: mpg123.
+%description -l pl.UTF-8
+Lame jest programem, kt√≥ry s≈Çu≈ºy do tworzenia skompresowanych plik√≥w
+d≈∫wiƒôkowych. (Lame nie jest programem do kompresji w formacie MP3).
+Stworzone pliki mo≈ºna odtwarzaƒá dekoderami MP3, np.: mpg123.
 
-%description -l pt_BR
-LAME È um encoder MP3 GPL.
+%description -l pt_BR.UTF-8
+LAME √© um encoder MP3 GPL.
 
 %package libs
 Summary:	LAME MP3 encoding library
-Summary(pl):	Biblioteka koduj±ca MP3 LAME
+Summary(pl.UTF-8):   Biblioteka kodujƒÖca MP3 LAME
 Group:		Libraries
 
 %description libs
 LAME MP3 encoding library.
 
-%description libs -l pl
-Biblioteka koduj±ca MP3 LAME.
+%description libs -l pl.UTF-8
+Biblioteka kodujƒÖca MP3 LAME.
 
 %package libs-devel
 Summary:	Header files and devel documentation
-Summary(es):	Archivos para desarrollo
-Summary(pl):	Pliki nag≥Ûwkowe i dokumentacja developerska
-Summary(pt_BR):	Arquivos para desenvolvimento
+Summary(es.UTF-8):   Archivos para desarrollo
+Summary(pl.UTF-8):   Pliki nag≈Ç√≥wkowe i dokumentacja developerska
+Summary(pt_BR.UTF-8):   Arquivos para desenvolvimento
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description libs-devel
 Header files and devel documentation for LAME libraries.
 
-%description libs-devel -l es
+%description libs-devel -l es.UTF-8
 Archivos de desarrolo.
 
-%description libs-devel -l pl
-Pliki nag≥Ûwkowe i dokumentacja developerska bibliotek LAME.
+%description libs-devel -l pl.UTF-8
+Pliki nag≈Ç√≥wkowe i dokumentacja developerska bibliotek LAME.
 
-%description libs-devel -l pt_BR
+%description libs-devel -l pt_BR.UTF-8
 Arquivos de desenvolvimento.
 
 %package libs-static
 Summary:	Static LAME library
-Summary(es):	Bibliotecas estaticas de desarrollo
-Summary(pl):	Biblioteki statyczne LAME
-Summary(pt_BR):	Bibliotecas est·ticas de desenvolvimento
+Summary(es.UTF-8):   Bibliotecas estaticas de desarrollo
+Summary(pl.UTF-8):   Biblioteki statyczne LAME
+Summary(pt_BR.UTF-8):   Bibliotecas est√°ticas de desenvolvimento
 Group:		Development/Libraries
 Requires:	%{name}-libs-devel = %{version}-%{release}
 
 %description libs-static
 LAME static libraries.
 
-%description libs-static -l es
+%description libs-static -l es.UTF-8
 Bibliotecas estaticas de desarrollo.
 
-%description libs-static -l pl
+%description libs-static -l pl.UTF-8
 Biblioteki statyczne LAME.
 
-%description libs-static -l pt_BR
-Bibliotecas est·ticas de desenvolvimento.
+%description libs-static -l pt_BR.UTF-8
+Bibliotecas est√°ticas de desenvolvimento.
 
 %package x11
 Summary:	GTK+ frame analyzer
-Summary(pl):	Analizator ramek w GTK+
+Summary(pl.UTF-8):   Analizator ramek w GTK+
 Group:		Applications/Sound
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description x11
 GTK+ frame analyzer.
 
-%description x11 -l pl
+%description x11 -l pl.UTF-8
 Analizator ramek w GTK+.
 
 %prep
