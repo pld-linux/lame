@@ -3,9 +3,9 @@
 %bcond_without	gtk	# without GTK+ frontend
 #
 Summary:	Software to create compressed audio files
-Summary(es.UTF-8):   Lame es un gerador de MP3
-Summary(pl.UTF-8):   Program do tworzenia skompresowanych plików dźwiękowych
-Summary(pt_BR.UTF-8):   Lame é um gerador de MP3
+Summary(es.UTF-8):	Lame es un gerador de MP3
+Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
+Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
 Version:	3.97
 Release:	2
@@ -44,7 +44,7 @@ LAME é um encoder MP3 GPL.
 
 %package libs
 Summary:	LAME MP3 encoding library
-Summary(pl.UTF-8):   Biblioteka kodująca MP3 LAME
+Summary(pl.UTF-8):	Biblioteka kodująca MP3 LAME
 Group:		Libraries
 
 %description libs
@@ -55,9 +55,9 @@ Biblioteka kodująca MP3 LAME.
 
 %package libs-devel
 Summary:	Header files and devel documentation
-Summary(es.UTF-8):   Archivos para desarrollo
-Summary(pl.UTF-8):   Pliki nagłówkowe i dokumentacja developerska
-Summary(pt_BR.UTF-8):   Arquivos para desenvolvimento
+Summary(es.UTF-8):	Archivos para desarrollo
+Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja developerska
+Summary(pt_BR.UTF-8):	Arquivos para desenvolvimento
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -75,9 +75,9 @@ Arquivos de desenvolvimento.
 
 %package libs-static
 Summary:	Static LAME library
-Summary(es.UTF-8):   Bibliotecas estaticas de desarrollo
-Summary(pl.UTF-8):   Biblioteki statyczne LAME
-Summary(pt_BR.UTF-8):   Bibliotecas estáticas de desenvolvimento
+Summary(es.UTF-8):	Bibliotecas estaticas de desarrollo
+Summary(pl.UTF-8):	Biblioteki statyczne LAME
+Summary(pt_BR.UTF-8):	Bibliotecas estáticas de desenvolvimento
 Group:		Development/Libraries
 Requires:	%{name}-libs-devel = %{version}-%{release}
 
@@ -95,7 +95,7 @@ Bibliotecas estáticas de desenvolvimento.
 
 %package x11
 Summary:	GTK+ frame analyzer
-Summary(pl.UTF-8):   Analizator ramek w GTK+
+Summary(pl.UTF-8):	Analizator ramek w GTK+
 Group:		Applications/Sound
 Requires:	%{name}-libs = %{version}-%{release}
 
