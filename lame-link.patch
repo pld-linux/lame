@@ -1,22 +1,11 @@
---- lame-3.93.1/libmp3lame/Makefile.am.orig	Sun Nov 17 11:16:38 2002
-+++ lame-3.93.1/libmp3lame/Makefile.am	Sat Jan 18 11:57:30 2003
-@@ -18,7 +18,7 @@
- decoder_ldadd =
+--- lame-398/frontend/Makefile.am.orig	2006-09-30 11:17:05.000000000 +0200
++++ lame-398/frontend/Makefile.am	2008-08-23 14:02:05.466113358 +0200
+@@ -52,7 +52,7 @@
  endif
  
--libmp3lame_la_LIBADD = $(nasm_ldadd) $(decoder_ldadd)
-+libmp3lame_la_LIBADD = $(nasm_ldadd) $(decoder_ldadd) -lm
- libmp3lame_la_LDFLAGS = -version-info @LIB_MAJOR_VERSION@:@LIB_MINOR_VERSION@ \
- 			-no-undefined
- 
---- lame-3.93.1/frontend/Makefile.am.orig	Sat Apr  6 16:08:18 2002
-+++ lame-3.93.1/frontend/Makefile.am	Sat Jan 18 11:59:55 2003
-@@ -53,7 +53,7 @@
- endif
- 
- CFLAGS = @CFLAGS@ @GTK_CFLAGS@ @FRONTEND_CFLAGS@
--LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@ -static
-+LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@
+ CFLAGS = @CFLAGS@ @GTK_CFLAGS@ @FRONTEND_CFLAGS@ @SNDFILE_CFLAGS@
+-LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@ @SNDFILE_LIBS@ -static
++LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@ @SNDFILE_LIBS@
  
  INCLUDES = -I$(top_srcdir)/libmp3lame -I$(top_srcdir)/include -I$(top_builddir)
  
