@@ -7,25 +7,28 @@ Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.97
-Release:	3
+Version:	3.98
+Release:	1
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
 # come from old mpg123 code, which was licensed on GPL
-License:	GPL
+License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/lame/%{name}-%{version}.tar.gz
-# Source0-md5:	90a4acbb730d150dfe80de145126eef7
+Source0:	http://dl.sourceforge.net/lame/%{name}-%(echo %{version} | tr -d .).tar.gz
+# Source0-md5:	f44b9f8e1b5d8835d0a77f9cc9cedd1c
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-amfix.patch
+Patch3:		%{name}-stdint.patch
 URL:		http://lame.sourceforge.net/
-BuildRequires:	autoconf >= 2.53
+BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
+# with --with-fileio=sndfile (but disables stdin input)
+#BuildRequires:	libsndfile-devel >= 1.0.2
 BuildRequires:	libtool
 BuildRequires:	nasm
 BuildRequires:	ncurses-devel >= 4.2
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -108,17 +111,20 @@ GTK+ frame analyzer.
 Analizator ramek w GTK+.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%(echo %{version} | tr -d .)
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
+%{__autoheader}
 %{__automake}
 %configure \
+	--disable-cpml \
 	--enable-shared \
 	--enable-static \
 	%{?with_gtk:--enable-mp3x} \
@@ -151,18 +157,19 @@ rm -rf $RPM_BUILD_ROOT
 %files libs
 %defattr(644,root,root,755)
 %doc LICENSE
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%attr(755,root,root) %{_libdir}/libmp3lame.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libmp3lame.so.0
 
 %files libs-devel
 %defattr(644,root,root,755)
 %doc API DEFINES
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
+%attr(755,root,root) %{_libdir}/libmp3lame.so
+%{_libdir}/libmp3lame.la
 %{_includedir}/lame
 
 %files libs-static
 %defattr(644,root,root,755)
-%{_libdir}/lib*.a
+%{_libdir}/libmp3lame.a
 
 %if %{with gtk}
 %files x11
