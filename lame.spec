@@ -15,7 +15,7 @@ Release:	1
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/lame/%{name}-%(echo %{_ver} | tr -d .)%{?_vermin:-%{_vermin}}.tar.gz
+Source0:	http://dl.sourceforge.net/lame/%{name}-%(echo %{_ver} | tr -d .)-%{_vermin}.tar.gz
 # Source0-md5:	719dae0ee675d0c16e0e89952930ed35
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
