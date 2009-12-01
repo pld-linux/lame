@@ -2,13 +2,13 @@
 # Conditional build:
 %bcond_without	gtk	# without GTK+ frontend
 #
+%define _ver	3.98
+%define _vermin	2
 Summary:	Software to create compressed audio files
 Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
-%define _ver	3.98
-%define _vermin	2
 Version:	%{_ver}.%{_vermin}
 Release:	1
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
@@ -29,6 +29,7 @@ BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	nasm
 BuildRequires:	ncurses-devel >= 4.2
+BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
