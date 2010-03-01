@@ -2,21 +2,19 @@
 # Conditional build:
 %bcond_without	gtk	# without GTK+ frontend
 #
-%define _ver	3.98
-%define _vermin	2
 Summary:	Software to create compressed audio files
 Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
-Version:	%{_ver}.%{_vermin}
+Version:	3.98.3
 Release:	1
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/lame/%{name}-%(echo %{_ver} | tr -d .)-%{_vermin}.tar.gz
-# Source0-md5:	719dae0ee675d0c16e0e89952930ed35
+Source0:	http://dl.sourceforge.net/project/%{name}/%{name}/%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	c0d510525566c7f8ed5b4bf343cb3b6d
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-amfix.patch
@@ -113,7 +111,7 @@ GTK+ frame analyzer.
 Analizator ramek w GTK+.
 
 %prep
-%setup -q -n %{name}-%(echo %{_ver} | tr -d .)%{?_vermin:-%{_vermin}}
+%setup -q
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
 %patch2 -p1
