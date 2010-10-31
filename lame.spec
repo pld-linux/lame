@@ -13,7 +13,7 @@ Release:	1
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
-Source0:	http://dl.sourceforge.net/project/%{name}/%{name}/%{version}/%{name}-%{version}.tar.gz
+Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
 # Source0-md5:	92169a198b28b7dfb79b8860b4709cff
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
@@ -148,7 +148,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog TODO USAGE doc/html/*.{html,css}
+%doc ChangeLog README TODO USAGE doc/html/*.{html,css}
 %attr(755,root,root) %{_bindir}/lame
 %attr(755,root,root) %{_bindir}/mp3rtp
 %{_mandir}/man1/lame.1*
