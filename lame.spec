@@ -7,17 +7,16 @@ Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.98.4
-Release:	2
+Version:	3.99
+Release:	1
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
 Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
-# Source0-md5:	92169a198b28b7dfb79b8860b4709cff
+# Source0-md5:	7abacd1d0a65a63733335786015626db
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
-Patch2:		%{name}-amfix.patch
 URL:		http://lame.sourceforge.net/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
@@ -114,7 +113,6 @@ Analizator ramek w GTK+.
 %setup -q
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
-%patch2 -p1
 
 %build
 %{__libtoolize}
@@ -138,7 +136,7 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-rm -rf $RPM_BUILD_ROOT%{_docdir}/lame/html
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/lame/html
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -148,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog README TODO USAGE doc/html/*.{html,css}
+%doc ChangeLog README TODO USAGE doc/html/*.html
 %attr(755,root,root) %{_bindir}/lame
 %attr(755,root,root) %{_bindir}/mp3rtp
 %{_mandir}/man1/lame.1*
