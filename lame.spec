@@ -18,7 +18,7 @@ Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 URL:		http://lame.sourceforge.net/
-BuildRequires:	autoconf >= 2.59
+BuildRequires:	autoconf >= 2.68
 BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 # with --with-fileio=sndfile (but disables stdin input)
