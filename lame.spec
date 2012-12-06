@@ -17,6 +17,7 @@ Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
 # Source0-md5:	5ad31e33e70455eb3a7b79a5dd934fce
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
+Patch2:		%{name}-automake_1_12.patch
 URL:		http://lame.sourceforge.net/
 BuildRequires:	autoconf >= 2.68
 BuildRequires:	automake
@@ -113,6 +114,7 @@ Analizator ramek w GTK+.
 %setup -q
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
+%patch2 -p1
 
 %build
 %{__libtoolize}
