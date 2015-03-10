@@ -1,0 +1,13 @@
+--- lame-3.99.5/configure.in~	2015-03-10 08:36:50.000000000 +0100
++++ lame-3.99.5/configure.in	2015-03-10 08:40:32.503330833 +0100
+@@ -646,10 +646,6 @@
+ 	;;
+ *86)
+ 	CPUTYPE="i386"
+-	if test $ac_cv_header_xmmintrin_h = yes ; then
+-		WITH_XMM=yes
+-		WITH_VECTOR=yes
+-	fi
+ 
+ 	# use internal knowledge of the IEEE 754 layout
+ 	AC_DEFINE(TAKEHIRO_IEEE754_HACK, 1, IEEE754 compatible machine)
