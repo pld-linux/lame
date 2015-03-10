@@ -1,5 +1,13 @@
 --- lame-3.99.5/configure.in~	2015-03-10 08:36:50.000000000 +0100
 +++ lame-3.99.5/configure.in	2015-03-10 08:40:32.503330833 +0100
+@@ -95,7 +95,6 @@
+ 		 sys/soundcard.h \
+ 		 sys/time.h \
+ 		 unistd.h \
+-		 xmmintrin.h \
+ 		 linux/soundcard.h)
+ 
+ dnl Checks for typedefs, structures, and compiler characteristics.
 @@ -646,10 +646,6 @@
  	;;
  *86)
