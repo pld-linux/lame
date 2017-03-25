@@ -1,18 +1,14 @@
 #
 # Conditional build:
-%bcond_without	gtk	# without GTK+ frontend
-%bcond_without	sse2	# disable SSE2 instructions usage
+%bcond_without	gtk	# GTK+ frontend
 #
-%ifarch %{ix86}
-%undefine	with_sse2
-%endif
 Summary:	Software to create compressed audio files
 Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
 Version:	3.99.5
-Release:	4
+Release:	5
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
@@ -22,7 +18,7 @@ Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
 Patch2:		%{name}-automake_1_12.patch
-Patch3:		no-sse2.patch
+Patch3:		%{name}-sse.patch
 URL:		http://lame.sourceforge.net/
 BuildRequires:	autoconf >= 2.68
 BuildRequires:	automake
@@ -30,24 +26,27 @@ BuildRequires:	automake
 # with --with-fileio=sndfile (but disables stdin input)
 #BuildRequires:	libsndfile-devel >= 1.0.2
 BuildRequires:	libtool
+%ifarch %{ix86}
 BuildRequires:	nasm
+%endif
 BuildRequires:	ncurses-devel >= 4.2
 BuildRequires:	pkgconfig
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Lame is a program which can be used to create compressed audio files.
-(Lame aint MP3 encoder). These audio files can be played back by
+Lame (LAME Ain't an MP3 Encoder) is a program which can be used to
+create compressed audio files. These audio files can be played back by
 popular MP3 players such as mpg123.
 
 %description -l es.UTF-8
 LAME es un encoder MP3 GPL.
 
 %description -l pl.UTF-8
-Lame jest programem, który służy do tworzenia skompresowanych plików
-dźwiękowych. (Lame nie jest programem do kompresji w formacie MP3).
-Stworzone pliki można odtwarzać dekoderami MP3, np.: mpg123.
+Lame (LAME Ain't an MP3 Encoder - LAME to nie program do kodowania
+MP3) jest programem, który służy do tworzenia skompresowanych plików
+dźwiękowych. Stworzone pliki można odtwarzać dekoderami MP3, np.:
+mpg123.
 
 %description -l pt_BR.UTF-8
 LAME é um encoder MP3 GPL.
@@ -66,7 +65,7 @@ Biblioteka kodująca MP3 LAME.
 %package libs-devel
 Summary:	Header files and devel documentation
 Summary(es.UTF-8):	Archivos para desarrollo
-Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja developerska
+Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja deweloperska
 Summary(pt_BR.UTF-8):	Arquivos para desenvolvimento
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
@@ -78,7 +77,7 @@ Header files and devel documentation for LAME libraries.
 Archivos de desarrolo.
 
 %description libs-devel -l pl.UTF-8
-Pliki nagłówkowe i dokumentacja developerska bibliotek LAME.
+Pliki nagłówkowe i dokumentacja deweloperska bibliotek LAME.
 
 %description libs-devel -l pt_BR.UTF-8
 Arquivos de desenvolvimento.
@@ -120,7 +119,7 @@ Analizator ramek w GTK+.
 %patch0 -p1
 %{!?with_gtk:%patch1 -p1}
 %patch2 -p1
-%{!?with_sse2:%patch3 -p1}
+%patch3 -p1
 
 %build
 %{__libtoolize}
@@ -130,11 +129,12 @@ Analizator ramek w GTK+.
 %{__automake}
 %configure \
 	--disable-cpml \
-	--enable-shared \
-	--enable-static \
+	--enable-dynamic-frontends \
 	%{?with_gtk:--enable-mp3x} \
 	--enable-mp3rtp \
-	--enable-brhist
+%ifarch %{ix86}
+	--enable-nasm
+%endif
 
 %{__make}
 

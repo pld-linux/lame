@@ -1,0 +1,61 @@
+--- lame-3.99.5/libmp3lame/vector/Makefile.am.orig	2007-01-09 11:15:53.000000000 +0100
++++ lame-3.99.5/libmp3lame/vector/Makefile.am	2017-03-24 22:07:11.773733964 +0100
+@@ -8,6 +8,7 @@
+ 
+ ##liblamecpuroutines_la_LIBADD = 
+ ##liblamecpuroutines_la_LDFLAGS =
++liblamevectorroutines_la_CFLAGS = -msse
+ 
+ INCLUDES = @INCLUDES@ \
+ 	-I$(top_srcdir)/libmp3lame \
+--- lame-3.99.5/libmp3lame/fft.c.orig	2009-04-20 23:48:00.000000000 +0200
++++ lame-3.99.5/libmp3lame/fft.c	2017-03-25 08:53:51.949957603 +0100
+@@ -308,7 +308,12 @@
+     for (i = 0; i < BLKSIZE_s / 2; i++)
+         window_s[i] = 0.5 * (1.0 - cos(2.0 * PI * (i + 0.5) / BLKSIZE_s));
+ 
+-    gfc->fft_fht = fht;
++#ifdef HAVE_XMMINTRIN_H
++    if (gfc->CPU_features.SSE2) { // TODO: isn't fht_SSE2() just SSE? I don't see anything SSE2 (emmintrin.h) specific inside
++        gfc->fft_fht = fht_SSE2;
++    }
++    else
++#endif
+ #ifdef HAVE_NASM
+     if (gfc->CPU_features.AMD_3DNow) {
+         gfc->fft_fht = fht_3DN;
+@@ -316,14 +321,7 @@
+     else if (gfc->CPU_features.SSE) {
+         gfc->fft_fht = fht_SSE;
+     }
+-    else {
+-        gfc->fft_fht = fht;
+-    }
+-#else
+-#ifdef HAVE_XMMINTRIN_H
+-#ifdef MIN_ARCH_SSE
+-    gfc->fft_fht = fht_SSE2;
+-#endif
+-#endif
++    else
+ #endif
++    gfc->fft_fht = fht;
+ }
+--- lame-3.99.5/libmp3lame/lame.c.orig	2017-03-25 08:56:45.616622288 +0100
++++ lame-3.99.5/libmp3lame/lame.c	2017-03-25 08:56:51.436622221 +0100
+@@ -1344,12 +1344,11 @@
+         else if (gfc->CPU_features.SSE) {
+             fft_asm_used = 2;
+         }
+-#else
+-# if defined( HAVE_XMMINTRIN_H ) && defined( MIN_ARCH_SSE )
+-        {
++#endif
++#ifdef HAVE_XMMINTRIN_H
++        if (gfc->CPU_features.SSE2)  {
+             fft_asm_used = 3;
+         }
+-# endif
+ #endif
+         if (gfc->CPU_features.MMX) {
+ #ifdef MMX_choose_table
