@@ -1,0 +1,10 @@
+--- lame-3.100/include/libmp3lame.sym.orig	2017-09-06 21:33:35.000000000 +0200
++++ lame-3.100/include/libmp3lame.sym	2017-12-22 22:34:11.394719210 +0100
+@@ -188,6 +188,7 @@
+ hip_set_errorf
+ hip_set_debugf
+ hip_set_msgf
++hip_set_pinfo
+ hip_decode
+ hip_decode_headers
+ hip_decode1

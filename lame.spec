@@ -7,20 +7,20 @@ Summary(es.UTF-8):	Lame es un gerador de MP3
 Summary(pl.UTF-8):	Program do tworzenia skompresowanych plików dźwiękowych
 Summary(pt_BR.UTF-8):	Lame é um gerador de MP3
 Name:		lame
-Version:	3.99.5
-Release:	5
+Version:	3.100
+Release:	1
 # libmp3lame encoder is LGPL v2+, but decoder parts (enabled by default)
 # come from old mpg123 code, which was licensed on GPL
 License:	GPL v2+ (MP3 decoder), LGPL v2+ (the rest)
 Group:		Applications/Sound
 Source0:	http://downloads.sourceforge.net/lame/%{name}-%{version}.tar.gz
-# Source0-md5:	84835b313d4a8b68f5349816d33e07ce
+# Source0-md5:	83e260acbe4389b54fe08e0bdbf7cddb
 Patch0:		%{name}-link.patch
 Patch1:		%{name}-without_gtk.patch
-Patch2:		%{name}-automake_1_12.patch
+Patch2:		%{name}-exports.patch
 Patch3:		%{name}-sse.patch
 URL:		http://lame.sourceforge.net/
-BuildRequires:	autoconf >= 2.68
+BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 # with --with-fileio=sndfile (but disables stdin input)
