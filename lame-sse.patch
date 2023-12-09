@@ -1,18 +1,9 @@
---- lame-3.99.5/libmp3lame/vector/Makefile.am.orig	2007-01-09 11:15:53.000000000 +0100
-+++ lame-3.99.5/libmp3lame/vector/Makefile.am	2017-03-24 22:07:11.773733964 +0100
-@@ -8,6 +8,7 @@
- 
- ##liblamecpuroutines_la_LIBADD = 
- ##liblamecpuroutines_la_LDFLAGS =
-+liblamevectorroutines_la_CFLAGS = -msse
- 
- INCLUDES = @INCLUDES@ \
- 	-I$(top_srcdir)/libmp3lame \
---- lame-3.99.5/libmp3lame/fft.c.orig	2009-04-20 23:48:00.000000000 +0200
-+++ lame-3.99.5/libmp3lame/fft.c	2017-03-25 08:53:51.949957603 +0100
-@@ -308,7 +308,12 @@
+diff -urNp -x '*.orig' lame-3.100.org/libmp3lame/fft.c lame-3.100/libmp3lame/fft.c
+--- lame-3.100.org/libmp3lame/fft.c	2017-09-06 21:33:36.000000000 +0200
++++ lame-3.100/libmp3lame/fft.c	2023-12-09 13:09:38.767851762 +0100
+@@ -318,7 +318,12 @@ init_fft(lame_internal_flags * const gfc
      for (i = 0; i < BLKSIZE_s / 2; i++)
-         window_s[i] = 0.5 * (1.0 - cos(2.0 * PI * (i + 0.5) / BLKSIZE_s));
+         gfc->cd_psy->window_s[i] = 0.5 * (1.0 - cos(2.0 * PI * (i + 0.5) / BLKSIZE_s));
  
 -    gfc->fft_fht = fht;
 +#ifdef HAVE_XMMINTRIN_H
@@ -24,7 +15,7 @@
  #ifdef HAVE_NASM
      if (gfc->CPU_features.AMD_3DNow) {
          gfc->fft_fht = fht_3DN;
-@@ -316,14 +321,7 @@
+@@ -326,14 +331,7 @@ init_fft(lame_internal_flags * const gfc
      else if (gfc->CPU_features.SSE) {
          gfc->fft_fht = fht_SSE;
      }
@@ -41,9 +32,10 @@
  #endif
 +    gfc->fft_fht = fht;
  }
---- lame-3.99.5/libmp3lame/lame.c.orig	2017-03-25 08:56:45.616622288 +0100
-+++ lame-3.99.5/libmp3lame/lame.c	2017-03-25 08:56:51.436622221 +0100
-@@ -1344,12 +1344,11 @@
+diff -urNp -x '*.orig' lame-3.100.org/libmp3lame/lame.c lame-3.100/libmp3lame/lame.c
+--- lame-3.100.org/libmp3lame/lame.c	2017-10-10 21:08:39.000000000 +0200
++++ lame-3.100/libmp3lame/lame.c	2023-12-09 13:09:38.768851775 +0100
+@@ -1354,12 +1354,11 @@ lame_print_config(const lame_global_flag
          else if (gfc->CPU_features.SSE) {
              fft_asm_used = 2;
          }
@@ -59,3 +51,14 @@
  #endif
          if (gfc->CPU_features.MMX) {
  #ifdef MMX_choose_table
+diff -urNp -x '*.orig' lame-3.100.org/libmp3lame/vector/Makefile.am lame-3.100/libmp3lame/vector/Makefile.am
+--- lame-3.100.org/libmp3lame/vector/Makefile.am	2007-01-09 11:15:53.000000000 +0100
++++ lame-3.100/libmp3lame/vector/Makefile.am	2023-12-09 13:09:38.767851762 +0100
+@@ -8,6 +8,7 @@ endif
+ 
+ ##liblamecpuroutines_la_LIBADD = 
+ ##liblamecpuroutines_la_LDFLAGS =
++liblamevectorroutines_la_CFLAGS = -msse
+ 
+ INCLUDES = @INCLUDES@ \
+ 	-I$(top_srcdir)/libmp3lame \
