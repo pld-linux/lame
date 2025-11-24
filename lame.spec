@@ -23,6 +23,7 @@ Patch3:		%{name}-sse.patch
 URL:		http://lame.sourceforge.net/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
+BuildRequires:	gettext-tools
 %{?with_gtk:BuildRequires:	gtk+-devel >= 1.2.0}
 # with --with-fileio=sndfile (but disables stdin input)
 #BuildRequires:	libsndfile-devel >= 1.0.2
@@ -32,9 +33,14 @@ BuildRequires:	nasm
 %endif
 BuildRequires:	ncurses-devel >= 4.2
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.527
+BuildRequires:	rpmbuild(macros) >= 1.750
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		gettext_ver	%(rpm -q --qf='%%{V}' gettext-tools 2> /dev/null || echo ERROR)
+%if %{_ver_ge %{gettext_ver} 0.24.1}
+%define		gettext_inc	-I/usr/share/gettext/m4
+%endif
 
 %description
 Lame (LAME Ain't an MP3 Encoder) is a program which can be used to
@@ -125,7 +131,7 @@ Analizator ramek w GTK+.
 
 %build
 %{__libtoolize}
-%{__aclocal}
+%{__aclocal} %{?gettext_inc}
 %{__autoconf}
 %{__autoheader}
 %{__automake}
