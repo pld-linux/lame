@@ -1,6 +1,7 @@
 #
 # Conditional build:
-%bcond_without	gtk	# GTK+ frontend
+%bcond_without	gtk		# GTK+ frontend
+%bcond_without	static_libs	# static libraries
 #
 Summary:	Software to create compressed audio files
 Summary(es.UTF-8):	Lame es un gerador de MP3
@@ -31,6 +32,7 @@ BuildRequires:	nasm
 %endif
 BuildRequires:	ncurses-devel >= 4.2
 BuildRequires:	pkgconfig
+BuildRequires:	rpmbuild(macros) >= 1.527
 Requires:	%{name}-libs = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -128,6 +130,7 @@ Analizator ramek w GTK+.
 %{__autoheader}
 %{__automake}
 %configure \
+	%{__enable_disable static_libs static} \
 	--disable-cpml \
 	--enable-dynamic-frontends \
 	%{?with_gtk:--enable-mp3x} \
@@ -172,9 +175,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libmp3lame.la
 %{_includedir}/lame
 
+%if %{with static_libs}
 %files libs-static
 %defattr(644,root,root,755)
 %{_libdir}/libmp3lame.a
+%endif
 
 %if %{with gtk}
 %files x11
