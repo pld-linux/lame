@@ -1,0 +1,894 @@
+Index: frontend/parse.c
+===================================================================
+--- frontend/parse.c	(revision 6561)
++++ frontend/parse.c	(revision 6562)
+@@ -402,41 +402,45 @@
+ }
+ 
+ #ifdef ID3TAGS_EXTENDED
++/* Set an ID3v2 tag field from UTF-16 data. The data pointer is genuinely
++   UTF-16 here, so the UTF-16 id3tag_* setters are used throughout. */
+ static int
+-set_id3v2tag(lame_global_flags* gfp, TextEncoding enc, int type, unsigned short const* str)
++set_id3v2tag_utf16(lame_global_flags* gfp, int type, unsigned short const* str)
+ {
+-    switch (enc)
++    switch (type)
+     {
+-        case TENC_UTF8:
+-            switch (type)
+-            {
+-                case 'a': return id3tag_set_textinfo_utf8(gfp, "TPE1", str);
+-                case 't': return id3tag_set_textinfo_utf8(gfp, "TIT2", str);
+-                case 'l': return id3tag_set_textinfo_utf8(gfp, "TALB", str);
+-                case 'g': return id3tag_set_textinfo_utf8(gfp, "TCON", str);
+-                case 'c': return id3tag_set_comment_ucs2(gfp, 0, 0, str);
+-                case 'n': return id3tag_set_textinfo_utf8(gfp, "TRCK", str);
+-                case 'y': return id3tag_set_textinfo_utf8(gfp, "TYER", str);
+-                case 'v': return id3tag_set_fieldvalue_ucs2(gfp, str);
+-            }
+-            ;;
+-        case TENC_UTF16:
+-            switch (type)
+-            {
+-                case 'a': return id3tag_set_textinfo_utf16(gfp, "TPE1", str);
+-                case 't': return id3tag_set_textinfo_utf16(gfp, "TIT2", str);
+-                case 'l': return id3tag_set_textinfo_utf16(gfp, "TALB", str);
+-                case 'g': return id3tag_set_textinfo_utf16(gfp, "TCON", str);
+-                case 'c': return id3tag_set_comment_utf16(gfp, 0, 0, str);
+-                case 'n': return id3tag_set_textinfo_utf16(gfp, "TRCK", str);
+-                case 'y': return id3tag_set_textinfo_utf16(gfp, "TYER", str);
+-                case 'v': return id3tag_set_fieldvalue_utf16(gfp, str);
+-            }
+-            ;;
+-        default:
+-            return -3;
++        case 'a': return id3tag_set_textinfo_utf16(gfp, "TPE1", str);
++        case 't': return id3tag_set_textinfo_utf16(gfp, "TIT2", str);
++        case 'l': return id3tag_set_textinfo_utf16(gfp, "TALB", str);
++        case 'g': return id3tag_set_textinfo_utf16(gfp, "TCON", str);
++        case 'c': return id3tag_set_comment_utf16(gfp, 0, 0, str);
++        case 'n': return id3tag_set_textinfo_utf16(gfp, "TRCK", str);
++        case 'y': return id3tag_set_textinfo_utf16(gfp, "TYER", str);
++        case 'v': return id3tag_set_fieldvalue_utf16(gfp, str);
+     }
++    return -3;
+ }
++
++/* Set an ID3v2 tag field from UTF-8 data. The data pointer is a UTF-8 char
++   string (not UTF-16 as the old, mistyped single handler assumed), so the
++   UTF-8 id3tag_* setters are used - including id3tag_set_fieldvalue_utf8 for
++   'v', which replaces the removed *_ucs2 calls the UTF-8 path used to make. */
++static int
++set_id3v2tag_utf8(lame_global_flags* gfp, int type, char const* str)
++{
++    switch (type)
++    {
++        case 'a': return id3tag_set_textinfo_utf8(gfp, "TPE1", str);
++        case 't': return id3tag_set_textinfo_utf8(gfp, "TIT2", str);
++        case 'l': return id3tag_set_textinfo_utf8(gfp, "TALB", str);
++        case 'g': return id3tag_set_textinfo_utf8(gfp, "TCON", str);
++        case 'c': return id3tag_set_comment_utf8(gfp, 0, 0, str);
++        case 'n': return id3tag_set_textinfo_utf8(gfp, "TRCK", str);
++        case 'y': return id3tag_set_textinfo_utf8(gfp, "TYER", str);
++        case 'v': return id3tag_set_fieldvalue_utf8(gfp, str);
++    }
++    return -3;
++}
+ #endif
+ 
+ static int
+@@ -480,8 +484,8 @@
+         default:
+ #ifdef ID3TAGS_EXTENDED
+         case TENC_LATIN1: result = set_id3tag(gfp, type, x);   break;
+-        case TENC_UTF16:  result = set_id3v2tag(gfp, enc, type, x); break;
+-        case TENC_UTF8:   result = set_id3v2tag(gfp, enc, type, x); break;
++        case TENC_UTF16:  result = set_id3v2tag_utf16(gfp, type, x); break;
++        case TENC_UTF8:   result = set_id3v2tag_utf8(gfp, type, x);  break;
+ #else
+         case TENC_RAW:    result = set_id3tag(gfp, type, x);   break;
+ #endif
+Index: include/lame.def
+===================================================================
+--- include/lame.def	(revision 6561)
++++ include/lame.def	(revision 6562)
+@@ -306,3 +306,6 @@
+ ; two external functions for ID3v2.4 tag support
+ id3tag_add_v2_4_UTF8 @2029
+ id3tag_v2_4_UTF8_only @2030
++
++; UTF-8 field-value setter (companion to id3tag_set_fieldvalue_utf16)
++id3tag_set_fieldvalue_utf8 @2031
+Index: include/lame.h
+===================================================================
+--- include/lame.h	(revision 6561)
++++ include/lame.h	(revision 6562)
+@@ -1297,6 +1297,9 @@
+ int CDECL id3tag_set_fieldvalue_utf16(lame_t gfp, const unsigned short *fieldvalue);
+ 
+ /* experimental */
++int CDECL id3tag_set_fieldvalue_utf8(lame_t gfp, const char *fieldvalue);
++
++/* experimental */
+ int CDECL id3tag_set_textinfo_utf16(lame_t gfp, char const *id, unsigned short const *text);
+ 
+ /* experimental */
+Index: include/libmp3lame.sym
+===================================================================
+--- include/libmp3lame.sym	(revision 6561)
++++ include/libmp3lame.sym	(revision 6562)
+@@ -229,6 +229,7 @@
+ id3tag_set_comment_ucs2
+ id3tag_set_fieldvalue_ucs2
+ id3tag_set_fieldvalue_utf16
++id3tag_set_fieldvalue_utf8
+ id3tag_set_textinfo_utf16
+ id3tag_set_comment_utf16
+ id3tag_set_textinfo_utf8
+Index: libmp3lame/id3tag.c
+===================================================================
+--- libmp3lame/id3tag.c	(revision 6561)
++++ libmp3lame/id3tag.c	(revision 6562)
+@@ -1844,6 +1844,21 @@
+     return id3tag_set_fieldvalue_utf16(gfp, fieldvalue);
+ }
+ 
++int
++id3tag_set_fieldvalue_utf8(lame_t gfp, const char *fieldvalue)
++{
++    if (is_lame_internal_flags_null(gfp)) {
++        return 0;
++    }
++    if (fieldvalue && *fieldvalue) {
++        if (strlen(fieldvalue) < 5 || fieldvalue[4] != '=') {
++            return -1;
++        }
++        return id3tag_set_textinfo_utf8(gfp, fieldvalue, &fieldvalue[5]);
++    }
++    return 0;
++}
++
+ size_t
+ lame_get_id3v2_tag(lame_t gfp, unsigned char *buffer, size_t size)
+ {
+#Index: test/unit/Makefile.am
+#===================================================================
+#--- test/unit/Makefile.am	(revision 6561)
+#+++ test/unit/Makefile.am	(revision 6562)
+#@@ -7,7 +7,8 @@
+# # "make" / "make check" behaves exactly as it did before the harness existed.
+# if ENABLE_UNIT_TESTS
+# 
+#-check_PROGRAMS = test_sanity test_get_audio_aiff test_parse_pathlen test_merge_argv
+#+check_PROGRAMS = test_sanity test_get_audio_aiff test_parse_pathlen test_merge_argv \
+#+	test_id3tag test_parse_id3
+# TESTS = $(check_PROGRAMS)
+# 
+# test_sanity_SOURCES = test_sanity.c
+#@@ -52,4 +53,27 @@
+# 	$(top_builddir)/libmp3lame/libmp3lame.la \
+# 	$(LTLIBICONV) -lm
+# 
+#+# The id3tag_* API is public, so this test links libmp3lame and calls it
+#+# directly - no frontend translation unit compiled in.
+#+test_id3tag_SOURCES = test_id3tag.c
+#+test_id3tag_CPPFLAGS = $(CMOCKA_CFLAGS) \
+#+	-I$(top_srcdir)/include \
+#+	-I$(top_builddir)
+#+test_id3tag_LDADD = $(CMOCKA_LIBS) \
+#+	$(top_builddir)/libmp3lame/libmp3lame.la \
+#+	-lm
+#+
+#+# The frontend ID3 dispatch (id3_tag/set_id3v2tag_*) is static in parse.c, so
+#+# this test compiles parse.c in directly; same include/link setup as the other
+#+# parse.c tests.
+#+test_parse_id3_SOURCES = test_parse_id3.c parse_test_stubs.c
+#+test_parse_id3_CPPFLAGS = $(CMOCKA_CFLAGS) \
+#+	-I$(top_srcdir)/frontend \
+#+	-I$(top_srcdir)/libmp3lame \
+#+	-I$(top_srcdir)/include \
+#+	-I$(top_builddir)
+#+test_parse_id3_LDADD = $(CMOCKA_LIBS) \
+#+	$(top_builddir)/libmp3lame/libmp3lame.la \
+#+	$(LTLIBICONV) -lm
+#+
+# endif
+#Index: test/unit/Makefile.in
+#===================================================================
+#--- test/unit/Makefile.in	(revision 6561)
+#+++ test/unit/Makefile.in	(revision 6562)
+#@@ -94,7 +94,9 @@
+# @ENABLE_UNIT_TESTS_TRUE@check_PROGRAMS = test_sanity$(EXEEXT) \
+# @ENABLE_UNIT_TESTS_TRUE@	test_get_audio_aiff$(EXEEXT) \
+# @ENABLE_UNIT_TESTS_TRUE@	test_parse_pathlen$(EXEEXT) \
+#-@ENABLE_UNIT_TESTS_TRUE@	test_merge_argv$(EXEEXT)
+#+@ENABLE_UNIT_TESTS_TRUE@	test_merge_argv$(EXEEXT) \
+#+@ENABLE_UNIT_TESTS_TRUE@	test_id3tag$(EXEEXT) \
+#+@ENABLE_UNIT_TESTS_TRUE@	test_parse_id3$(EXEEXT)
+# subdir = test/unit
+# ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+# am__aclocal_m4_deps = $(top_srcdir)/m4/host-cpu-c-abi.m4 \
+#@@ -128,6 +130,13 @@
+# 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+# 	$(AM_CFLAGS) $(CFLAGS) $(test_get_audio_aiff_LDFLAGS) \
+# 	$(LDFLAGS) -o $@
+#+am__test_id3tag_SOURCES_DIST = test_id3tag.c
+#+@ENABLE_UNIT_TESTS_TRUE@am_test_id3tag_OBJECTS =  \
+#+@ENABLE_UNIT_TESTS_TRUE@	test_id3tag-test_id3tag.$(OBJEXT)
+#+test_id3tag_OBJECTS = $(am_test_id3tag_OBJECTS)
+#+@ENABLE_UNIT_TESTS_TRUE@test_id3tag_DEPENDENCIES =  \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(am__DEPENDENCIES_1) \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la
+# am__test_merge_argv_SOURCES_DIST = test_merge_argv.c \
+# 	parse_test_stubs.c
+# @ENABLE_UNIT_TESTS_TRUE@am_test_merge_argv_OBJECTS = test_merge_argv-test_merge_argv.$(OBJEXT) \
+#@@ -137,6 +146,14 @@
+# @ENABLE_UNIT_TESTS_TRUE@	$(am__DEPENDENCIES_1) \
+# @ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la \
+# @ENABLE_UNIT_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+#+am__test_parse_id3_SOURCES_DIST = test_parse_id3.c parse_test_stubs.c
+#+@ENABLE_UNIT_TESTS_TRUE@am_test_parse_id3_OBJECTS = test_parse_id3-test_parse_id3.$(OBJEXT) \
+#+@ENABLE_UNIT_TESTS_TRUE@	test_parse_id3-parse_test_stubs.$(OBJEXT)
+#+test_parse_id3_OBJECTS = $(am_test_parse_id3_OBJECTS)
+#+@ENABLE_UNIT_TESTS_TRUE@test_parse_id3_DEPENDENCIES =  \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(am__DEPENDENCIES_1) \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(am__DEPENDENCIES_1)
+# am__test_parse_pathlen_SOURCES_DIST = test_parse_pathlen.c \
+# 	parse_test_stubs.c
+# @ENABLE_UNIT_TESTS_TRUE@am_test_parse_pathlen_OBJECTS = test_parse_pathlen-test_parse_pathlen.$(OBJEXT) \
+#@@ -170,8 +187,11 @@
+# am__depfiles_remade =  \
+# 	./$(DEPDIR)/test_get_audio_aiff-test_get_audio_aiff.Po \
+# 	./$(DEPDIR)/test_get_audio_aiff-test_stubs.Po \
+#+	./$(DEPDIR)/test_id3tag-test_id3tag.Po \
+# 	./$(DEPDIR)/test_merge_argv-parse_test_stubs.Po \
+# 	./$(DEPDIR)/test_merge_argv-test_merge_argv.Po \
+#+	./$(DEPDIR)/test_parse_id3-parse_test_stubs.Po \
+#+	./$(DEPDIR)/test_parse_id3-test_parse_id3.Po \
+# 	./$(DEPDIR)/test_parse_pathlen-parse_test_stubs.Po \
+# 	./$(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Po \
+# 	./$(DEPDIR)/test_sanity-test_sanity.Po
+#@@ -194,10 +214,13 @@
+# am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+# am__v_CCLD_0 = @echo "  CCLD    " $@;
+# am__v_CCLD_1 = 
+#-SOURCES = $(test_get_audio_aiff_SOURCES) $(test_merge_argv_SOURCES) \
+#+SOURCES = $(test_get_audio_aiff_SOURCES) $(test_id3tag_SOURCES) \
+#+	$(test_merge_argv_SOURCES) $(test_parse_id3_SOURCES) \
+# 	$(test_parse_pathlen_SOURCES) $(test_sanity_SOURCES)
+# DIST_SOURCES = $(am__test_get_audio_aiff_SOURCES_DIST) \
+#+	$(am__test_id3tag_SOURCES_DIST) \
+# 	$(am__test_merge_argv_SOURCES_DIST) \
+#+	$(am__test_parse_id3_SOURCES_DIST) \
+# 	$(am__test_parse_pathlen_SOURCES_DIST) \
+# 	$(am__test_sanity_SOURCES_DIST)
+# am__can_run_installinfo = \
+#@@ -644,6 +667,33 @@
+# @ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la \
+# @ENABLE_UNIT_TESTS_TRUE@	$(LTLIBICONV) -lm
+# 
+#+
+#+# The id3tag_* API is public, so this test links libmp3lame and calls it
+#+# directly - no frontend translation unit compiled in.
+#+@ENABLE_UNIT_TESTS_TRUE@test_id3tag_SOURCES = test_id3tag.c
+#+@ENABLE_UNIT_TESTS_TRUE@test_id3tag_CPPFLAGS = $(CMOCKA_CFLAGS) \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_srcdir)/include \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_builddir)
+#+
+#+@ENABLE_UNIT_TESTS_TRUE@test_id3tag_LDADD = $(CMOCKA_LIBS) \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la \
+#+@ENABLE_UNIT_TESTS_TRUE@	-lm
+#+
+#+
+#+# The frontend ID3 dispatch (id3_tag/set_id3v2tag_*) is static in parse.c, so
+#+# this test compiles parse.c in directly; same include/link setup as the other
+#+# parse.c tests.
+#+@ENABLE_UNIT_TESTS_TRUE@test_parse_id3_SOURCES = test_parse_id3.c parse_test_stubs.c
+#+@ENABLE_UNIT_TESTS_TRUE@test_parse_id3_CPPFLAGS = $(CMOCKA_CFLAGS) \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_srcdir)/frontend \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_srcdir)/libmp3lame \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_srcdir)/include \
+#+@ENABLE_UNIT_TESTS_TRUE@	-I$(top_builddir)
+#+
+#+@ENABLE_UNIT_TESTS_TRUE@test_parse_id3_LDADD = $(CMOCKA_LIBS) \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(top_builddir)/libmp3lame/libmp3lame.la \
+#+@ENABLE_UNIT_TESTS_TRUE@	$(LTLIBICONV) -lm
+#+
+# all: all-am
+# 
+# .SUFFIXES:
+#@@ -687,10 +737,18 @@
+# 	@rm -f test_get_audio_aiff$(EXEEXT)
+# 	$(AM_V_CCLD)$(test_get_audio_aiff_LINK) $(test_get_audio_aiff_OBJECTS) $(test_get_audio_aiff_LDADD) $(LIBS)
+# 
+#+test_id3tag$(EXEEXT): $(test_id3tag_OBJECTS) $(test_id3tag_DEPENDENCIES) $(EXTRA_test_id3tag_DEPENDENCIES) 
+#+	@rm -f test_id3tag$(EXEEXT)
+#+	$(AM_V_CCLD)$(LINK) $(test_id3tag_OBJECTS) $(test_id3tag_LDADD) $(LIBS)
+#+
+# test_merge_argv$(EXEEXT): $(test_merge_argv_OBJECTS) $(test_merge_argv_DEPENDENCIES) $(EXTRA_test_merge_argv_DEPENDENCIES) 
+# 	@rm -f test_merge_argv$(EXEEXT)
+# 	$(AM_V_CCLD)$(LINK) $(test_merge_argv_OBJECTS) $(test_merge_argv_LDADD) $(LIBS)
+# 
+#+test_parse_id3$(EXEEXT): $(test_parse_id3_OBJECTS) $(test_parse_id3_DEPENDENCIES) $(EXTRA_test_parse_id3_DEPENDENCIES) 
+#+	@rm -f test_parse_id3$(EXEEXT)
+#+	$(AM_V_CCLD)$(LINK) $(test_parse_id3_OBJECTS) $(test_parse_id3_LDADD) $(LIBS)
+#+
+# test_parse_pathlen$(EXEEXT): $(test_parse_pathlen_OBJECTS) $(test_parse_pathlen_DEPENDENCIES) $(EXTRA_test_parse_pathlen_DEPENDENCIES) 
+# 	@rm -f test_parse_pathlen$(EXEEXT)
+# 	$(AM_V_CCLD)$(LINK) $(test_parse_pathlen_OBJECTS) $(test_parse_pathlen_LDADD) $(LIBS)
+#@@ -707,8 +765,11 @@
+# 
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_get_audio_aiff-test_get_audio_aiff.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_get_audio_aiff-test_stubs.Po@am__quote@ # am--include-marker
+#+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_id3tag-test_id3tag.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_merge_argv-parse_test_stubs.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_merge_argv-test_merge_argv.Po@am__quote@ # am--include-marker
+#+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_parse_id3-parse_test_stubs.Po@am__quote@ # am--include-marker
+#+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_parse_id3-test_parse_id3.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_parse_pathlen-parse_test_stubs.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Po@am__quote@ # am--include-marker
+# @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sanity-test_sanity.Po@am__quote@ # am--include-marker
+#@@ -768,6 +829,20 @@
+# @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+# @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_get_audio_aiff_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_get_audio_aiff-test_stubs.obj `if test -f 'test_stubs.c'; then $(CYGPATH_W) 'test_stubs.c'; else $(CYGPATH_W) '$(srcdir)/test_stubs.c'; fi`
+# 
+#+test_id3tag-test_id3tag.o: test_id3tag.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_id3tag_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_id3tag-test_id3tag.o -MD -MP -MF $(DEPDIR)/test_id3tag-test_id3tag.Tpo -c -o test_id3tag-test_id3tag.o `test -f 'test_id3tag.c' || echo '$(srcdir)/'`test_id3tag.c
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_id3tag-test_id3tag.Tpo $(DEPDIR)/test_id3tag-test_id3tag.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_id3tag.c' object='test_id3tag-test_id3tag.o' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_id3tag_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_id3tag-test_id3tag.o `test -f 'test_id3tag.c' || echo '$(srcdir)/'`test_id3tag.c
+#+
+#+test_id3tag-test_id3tag.obj: test_id3tag.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_id3tag_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_id3tag-test_id3tag.obj -MD -MP -MF $(DEPDIR)/test_id3tag-test_id3tag.Tpo -c -o test_id3tag-test_id3tag.obj `if test -f 'test_id3tag.c'; then $(CYGPATH_W) 'test_id3tag.c'; else $(CYGPATH_W) '$(srcdir)/test_id3tag.c'; fi`
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_id3tag-test_id3tag.Tpo $(DEPDIR)/test_id3tag-test_id3tag.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_id3tag.c' object='test_id3tag-test_id3tag.obj' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_id3tag_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_id3tag-test_id3tag.obj `if test -f 'test_id3tag.c'; then $(CYGPATH_W) 'test_id3tag.c'; else $(CYGPATH_W) '$(srcdir)/test_id3tag.c'; fi`
+#+
+# test_merge_argv-test_merge_argv.o: test_merge_argv.c
+# @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_merge_argv_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_merge_argv-test_merge_argv.o -MD -MP -MF $(DEPDIR)/test_merge_argv-test_merge_argv.Tpo -c -o test_merge_argv-test_merge_argv.o `test -f 'test_merge_argv.c' || echo '$(srcdir)/'`test_merge_argv.c
+# @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_merge_argv-test_merge_argv.Tpo $(DEPDIR)/test_merge_argv-test_merge_argv.Po
+#@@ -796,6 +871,34 @@
+# @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+# @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_merge_argv_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_merge_argv-parse_test_stubs.obj `if test -f 'parse_test_stubs.c'; then $(CYGPATH_W) 'parse_test_stubs.c'; else $(CYGPATH_W) '$(srcdir)/parse_test_stubs.c'; fi`
+# 
+#+test_parse_id3-test_parse_id3.o: test_parse_id3.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_parse_id3-test_parse_id3.o -MD -MP -MF $(DEPDIR)/test_parse_id3-test_parse_id3.Tpo -c -o test_parse_id3-test_parse_id3.o `test -f 'test_parse_id3.c' || echo '$(srcdir)/'`test_parse_id3.c
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_parse_id3-test_parse_id3.Tpo $(DEPDIR)/test_parse_id3-test_parse_id3.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_parse_id3.c' object='test_parse_id3-test_parse_id3.o' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_parse_id3-test_parse_id3.o `test -f 'test_parse_id3.c' || echo '$(srcdir)/'`test_parse_id3.c
+#+
+#+test_parse_id3-test_parse_id3.obj: test_parse_id3.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_parse_id3-test_parse_id3.obj -MD -MP -MF $(DEPDIR)/test_parse_id3-test_parse_id3.Tpo -c -o test_parse_id3-test_parse_id3.obj `if test -f 'test_parse_id3.c'; then $(CYGPATH_W) 'test_parse_id3.c'; else $(CYGPATH_W) '$(srcdir)/test_parse_id3.c'; fi`
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_parse_id3-test_parse_id3.Tpo $(DEPDIR)/test_parse_id3-test_parse_id3.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_parse_id3.c' object='test_parse_id3-test_parse_id3.obj' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_parse_id3-test_parse_id3.obj `if test -f 'test_parse_id3.c'; then $(CYGPATH_W) 'test_parse_id3.c'; else $(CYGPATH_W) '$(srcdir)/test_parse_id3.c'; fi`
+#+
+#+test_parse_id3-parse_test_stubs.o: parse_test_stubs.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_parse_id3-parse_test_stubs.o -MD -MP -MF $(DEPDIR)/test_parse_id3-parse_test_stubs.Tpo -c -o test_parse_id3-parse_test_stubs.o `test -f 'parse_test_stubs.c' || echo '$(srcdir)/'`parse_test_stubs.c
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_parse_id3-parse_test_stubs.Tpo $(DEPDIR)/test_parse_id3-parse_test_stubs.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='parse_test_stubs.c' object='test_parse_id3-parse_test_stubs.o' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_parse_id3-parse_test_stubs.o `test -f 'parse_test_stubs.c' || echo '$(srcdir)/'`parse_test_stubs.c
+#+
+#+test_parse_id3-parse_test_stubs.obj: parse_test_stubs.c
+#+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_parse_id3-parse_test_stubs.obj -MD -MP -MF $(DEPDIR)/test_parse_id3-parse_test_stubs.Tpo -c -o test_parse_id3-parse_test_stubs.obj `if test -f 'parse_test_stubs.c'; then $(CYGPATH_W) 'parse_test_stubs.c'; else $(CYGPATH_W) '$(srcdir)/parse_test_stubs.c'; fi`
+#+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_parse_id3-parse_test_stubs.Tpo $(DEPDIR)/test_parse_id3-parse_test_stubs.Po
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='parse_test_stubs.c' object='test_parse_id3-parse_test_stubs.obj' libtool=no @AMDEPBACKSLASH@
+#+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+#+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_id3_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_parse_id3-parse_test_stubs.obj `if test -f 'parse_test_stubs.c'; then $(CYGPATH_W) 'parse_test_stubs.c'; else $(CYGPATH_W) '$(srcdir)/parse_test_stubs.c'; fi`
+#+
+# test_parse_pathlen-test_parse_pathlen.o: test_parse_pathlen.c
+# @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_parse_pathlen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_parse_pathlen-test_parse_pathlen.o -MD -MP -MF $(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Tpo -c -o test_parse_pathlen-test_parse_pathlen.o `test -f 'test_parse_pathlen.c' || echo '$(srcdir)/'`test_parse_pathlen.c
+# @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Tpo $(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Po
+#@@ -1090,6 +1193,20 @@
+# 	--log-file $$b.log --trs-file $$b.trs \
+# 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+# 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+#+test_id3tag.log: test_id3tag$(EXEEXT)
+#+	@p='test_id3tag$(EXEEXT)'; \
+#+	b='test_id3tag'; \
+#+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+#+	--log-file $$b.log --trs-file $$b.trs \
+#+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+#+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+#+test_parse_id3.log: test_parse_id3$(EXEEXT)
+#+	@p='test_parse_id3$(EXEEXT)'; \
+#+	b='test_parse_id3'; \
+#+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+#+	--log-file $$b.log --trs-file $$b.trs \
+#+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+#+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+# .test.log:
+# 	@p='$<'; \
+# 	$(am__set_b); \
+#@@ -1185,8 +1302,11 @@
+# distclean: distclean-am
+# 	-rm -f ./$(DEPDIR)/test_get_audio_aiff-test_get_audio_aiff.Po
+# 	-rm -f ./$(DEPDIR)/test_get_audio_aiff-test_stubs.Po
+#+	-rm -f ./$(DEPDIR)/test_id3tag-test_id3tag.Po
+# 	-rm -f ./$(DEPDIR)/test_merge_argv-parse_test_stubs.Po
+# 	-rm -f ./$(DEPDIR)/test_merge_argv-test_merge_argv.Po
+#+	-rm -f ./$(DEPDIR)/test_parse_id3-parse_test_stubs.Po
+#+	-rm -f ./$(DEPDIR)/test_parse_id3-test_parse_id3.Po
+# 	-rm -f ./$(DEPDIR)/test_parse_pathlen-parse_test_stubs.Po
+# 	-rm -f ./$(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Po
+# 	-rm -f ./$(DEPDIR)/test_sanity-test_sanity.Po
+#@@ -1237,8 +1357,11 @@
+# maintainer-clean: maintainer-clean-am
+# 	-rm -f ./$(DEPDIR)/test_get_audio_aiff-test_get_audio_aiff.Po
+# 	-rm -f ./$(DEPDIR)/test_get_audio_aiff-test_stubs.Po
+#+	-rm -f ./$(DEPDIR)/test_id3tag-test_id3tag.Po
+# 	-rm -f ./$(DEPDIR)/test_merge_argv-parse_test_stubs.Po
+# 	-rm -f ./$(DEPDIR)/test_merge_argv-test_merge_argv.Po
+#+	-rm -f ./$(DEPDIR)/test_parse_id3-parse_test_stubs.Po
+#+	-rm -f ./$(DEPDIR)/test_parse_id3-test_parse_id3.Po
+# 	-rm -f ./$(DEPDIR)/test_parse_pathlen-parse_test_stubs.Po
+# 	-rm -f ./$(DEPDIR)/test_parse_pathlen-test_parse_pathlen.Po
+# 	-rm -f ./$(DEPDIR)/test_sanity-test_sanity.Po
+#Index: test/unit/test_id3tag.c
+#===================================================================
+#--- test/unit/test_id3tag.c	(nonexistent)
+#+++ test/unit/test_id3tag.c	(revision 6562)
+#@@ -0,0 +1,314 @@
+#+/**
+#+ * @file
+#+ * @ingroup unit_tests
+#+ * @brief Unit tests for the public id3tag_* tagging API (libmp3lame/id3tag.c).
+#+ *
+#+ * Exercises the ID3v1 and ID3v2 tag setters across the Latin-1, UTF-16 and
+#+ * UTF-8 encodings and reads the result back with lame_get_id3v1_tag() /
+#+ * lame_get_id3v2_tag(). Each case asserts the expected frame id is present,
+#+ * and the stored text where it can be recovered by a byte search: Latin-1 and
+#+ * UTF-8 verbatim, UTF-16 as its 2-byte code units. Genre is stored as a numeric
+#+ * reference rather than the literal string, so only its frame is checked. The
+#+ * id3tag_set_fieldvalue_utf8() setter and its malformed-input handling are
+#+ * covered too.
+#+ *
+#+ * These are library-level tests: they link libmp3lame and call the exported
+#+ * API directly, so no frontend translation unit is compiled in.
+#+ */
+#+
+#+#ifdef HAVE_CONFIG_H
+#+# include <config.h>
+#+#endif
+#+
+#+#include <stdarg.h>
+#+#include <stddef.h>
+#+#include <setjmp.h>
+#+#include <stdlib.h>
+#+#include <string.h>
+#+
+#+#include <cmocka.h>
+#+
+#+#include "lame.h"
+#+
+#+/** Scratch buffer for an assembled tag; larger than any tag these tests make. */
+#+static unsigned char tagbuf[8192];
+#+
+#+/** @brief True if the byte string @p needle occurs verbatim in @p hay. */
+#+static int
+#+mem_contains(const unsigned char *hay, size_t hn, const char *needle)
+#+{
+#+    size_t nn = strlen(needle);
+#+    size_t i;
+#+    if (nn == 0 || nn > hn)
+#+        return 0;
+#+    for (i = 0; i + nn <= hn; ++i) {
+#+        if (memcmp(hay + i, needle, nn) == 0)
+#+            return 1;
+#+    }
+#+    return 0;
+#+}
+#+
+#+/**
+#+ * @brief True if the ASCII @p needle occurs in @p hay as UTF-16 code units.
+#+ *
+#+ * UTF-16 text is stored two bytes per character, so an ASCII needle never
+#+ * appears as contiguous bytes; search for its little- or big-endian wide form
+#+ * (each character paired with a zero byte) instead.
+#+ */
+#+static int
+#+mem_contains_wide(const unsigned char *hay, size_t hn, const char *needle)
+#+{
+#+    size_t nn = strlen(needle), wn = nn * 2, i, j;
+#+    if (nn == 0 || wn > hn)
+#+        return 0;
+#+    for (i = 0; i + wn <= hn; ++i) {
+#+        int le = 1, be = 1;
+#+        for (j = 0; j < nn; ++j) {
+#+            unsigned char c = (unsigned char) needle[j];
+#+            if (hay[i + 2 * j] != c || hay[i + 2 * j + 1] != 0)
+#+                le = 0;
+#+            if (hay[i + 2 * j] != 0 || hay[i + 2 * j + 1] != c)
+#+                be = 0;
+#+        }
+#+        if (le || be)
+#+            return 1;
+#+    }
+#+    return 0;
+#+}
+#+
+#+/** @brief Assemble the ID3v2 tag into ::tagbuf, returning its size. */
+#+static size_t
+#+get_v2(lame_t gfp)
+#+{
+#+    return lame_get_id3v2_tag(gfp, tagbuf, sizeof tagbuf);
+#+}
+#+
+#+/* --- ID3v2 text frames ------------------------------------------------- */
+#+
+#+/** @brief Latin-1 title -> a TIT2 frame containing the text. */
+#+static void
+#+test_v2_title_latin1(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    id3tag_set_title(gfp, "MyTitle");
+#+    sz = get_v2(gfp);
+#+    assert_true(sz > 10);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+    assert_true(mem_contains(tagbuf, sz, "MyTitle"));
+#+}
+#+
+#+/** @brief UTF-8 textinfo -> the named frame with the (ASCII-transparent) text. */
+#+static void
+#+test_v2_textinfo_utf8(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_textinfo_utf8(gfp, "TPE1", "MyArtist"), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "TPE1"));
+#+    assert_true(mem_contains(tagbuf, sz, "MyArtist"));
+#+}
+#+
+#+/** @brief UTF-16 textinfo -> the named frame (text stored as UTF-16). */
+#+static void
+#+test_v2_textinfo_utf16(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    static const unsigned short u_album[] = { 0xFEFF, 'M','y','A','l','b','u','m', 0 };
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_textinfo_utf16(gfp, "TALB", u_album), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "TALB"));            /* frame present */
+#+    assert_true(mem_contains_wide(tagbuf, sz, "MyAlbum"));    /* UTF-16 text */
+#+}
+#+
+#+/* --- ID3v2 comment frames ---------------------------------------------- */
+#+
+#+/** @brief UTF-8 comment -> a COMM frame containing the text. */
+#+static void
+#+test_v2_comment_utf8(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_comment_utf8(gfp, 0, 0, "HelloComment"), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "COMM"));
+#+    assert_true(mem_contains(tagbuf, sz, "HelloComment"));
+#+}
+#+
+#+/** @brief UTF-16 comment -> a COMM frame. */
+#+static void
+#+test_v2_comment_utf16(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    static const unsigned short u_c[] = { 0xFEFF, 'H','i', 0 };
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_comment_utf16(gfp, 0, 0, u_c), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "COMM"));
+#+    assert_true(mem_contains_wide(tagbuf, sz, "Hi"));   /* UTF-16 text */
+#+}
+#+
+#+/* --- ID3v2 field-value (arbitrary frame) ------------------------------- */
+#+
+#+/** @brief Latin-1 field value "ID=text" -> that frame. */
+#+static void
+#+test_v2_fieldvalue_latin1(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_fieldvalue(gfp, "TIT2=FieldTitle"), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+    assert_true(mem_contains(tagbuf, sz, "FieldTitle"));
+#+}
+#+
+#+/** @brief UTF-16 field value "ID=text" -> that frame. */
+#+static void
+#+test_v2_fieldvalue_utf16(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    static const unsigned short u_fv[] = {
+#+        0xFEFF, 'T','I','T','2','=','F','V','1','6', 0
+#+    };
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_fieldvalue_utf16(gfp, u_fv), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+    assert_true(mem_contains_wide(tagbuf, sz, "FV16"));   /* UTF-16 text */
+#+}
+#+
+#+/** @brief UTF-8 field value "ID=text" -> that frame (SF #524's new setter). */
+#+static void
+#+test_v2_fieldvalue_utf8(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_fieldvalue_utf8(gfp, "TIT2=FieldUtf8"), 0);
+#+    sz = get_v2(gfp);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+    assert_true(mem_contains(tagbuf, sz, "FieldUtf8"));
+#+}
+#+
+#+/** @brief id3tag_set_fieldvalue_utf8() rejects malformed "ID=..." input. */
+#+static void
+#+test_v2_fieldvalue_utf8_malformed(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_fieldvalue_utf8(gfp, "TI=x"), -1);   /* < 5 bytes */
+#+    assert_int_equal(id3tag_set_fieldvalue_utf8(gfp, "TIT2v=x"), -1); /* [4] != '=' */
+#+    assert_int_equal(id3tag_set_fieldvalue_utf8(gfp, ""), 0);        /* empty: no-op */
+#+    assert_int_equal(id3tag_set_fieldvalue_utf8(gfp, NULL), 0);      /* NULL: no-op */
+#+}
+#+
+#+/* --- genre ------------------------------------------------------------- */
+#+
+#+/** @brief A named genre -> a TCON frame in the v2 tag. */
+#+static void
+#+test_v2_genre(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3tag_set_genre(gfp, "Rock"), 0);
+#+    sz = get_v2(gfp);
+#+    /* "Rock" is a standard genre, stored as a numeric reference rather than the
+#+       literal string, so only the frame's presence is checked, not the text. */
+#+    assert_true(mem_contains(tagbuf, sz, "TCON"));
+#+}
+#+
+#+/* --- ID3v1 ------------------------------------------------------------- */
+#+
+#+/** @brief Short fields produce a 128-byte "TAG..." ID3v1 block. */
+#+static void
+#+test_v1_basic(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    size_t sz;
+#+    id3tag_set_title(gfp, "V1Title");
+#+    id3tag_set_artist(gfp, "V1Artist");
+#+    id3tag_set_album(gfp, "V1Album");
+#+    id3tag_set_year(gfp, "2020");
+#+    sz = lame_get_id3v1_tag(gfp, tagbuf, sizeof tagbuf);
+#+    assert_int_equal(sz, 128);
+#+    assert_memory_equal(tagbuf, "TAG", 3);
+#+    assert_true(mem_contains(tagbuf, sz, "V1Title"));
+#+    assert_true(mem_contains(tagbuf, sz, "V1Artist"));
+#+}
+#+
+#+/* --- v1-only / v2-only gating ------------------------------------------ */
+#+
+#+/** @brief id3tag_v1_only() suppresses the ID3v2 tag. */
+#+static void
+#+test_v1_only_suppresses_v2(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    id3tag_v1_only(gfp);
+#+    id3tag_set_title(gfp, "X");
+#+    assert_int_equal(get_v2(gfp), 0);
+#+}
+#+
+#+/** @brief id3tag_v2_only() suppresses the ID3v1 tag. */
+#+static void
+#+test_v2_only_suppresses_v1(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    id3tag_v2_only(gfp);
+#+    id3tag_set_title(gfp, "X");
+#+    assert_int_equal(lame_get_id3v1_tag(gfp, tagbuf, sizeof tagbuf), 0);
+#+}
+#+
+#+/* --- fixture ----------------------------------------------------------- */
+#+
+#+/** @brief Per-test fixture: fresh lame_t into @p state. */
+#+static int
+#+setup_lame(void **state)
+#+{
+#+    lame_t gfp = lame_init();
+#+    if (gfp == NULL)
+#+        return -1;
+#+    *state = gfp;
+#+    return 0;
+#+}
+#+
+#+/** @brief Per-test fixture teardown: closes the lame_t. */
+#+static int
+#+teardown_lame(void **state)
+#+{
+#+    lame_close((lame_t) *state);
+#+    return 0;
+#+}
+#+
+#+#define ID3_TEST(f) cmocka_unit_test_setup_teardown(f, setup_lame, teardown_lame)
+#+
+#+/** @brief Registers and runs the id3tag API test group. */
+#+int
+#+main(void)
+#+{
+#+    const struct CMUnitTest tests[] = {
+#+        ID3_TEST(test_v2_title_latin1),
+#+        ID3_TEST(test_v2_textinfo_utf8),
+#+        ID3_TEST(test_v2_textinfo_utf16),
+#+        ID3_TEST(test_v2_comment_utf8),
+#+        ID3_TEST(test_v2_comment_utf16),
+#+        ID3_TEST(test_v2_fieldvalue_latin1),
+#+        ID3_TEST(test_v2_fieldvalue_utf16),
+#+        ID3_TEST(test_v2_fieldvalue_utf8),
+#+        ID3_TEST(test_v2_fieldvalue_utf8_malformed),
+#+        ID3_TEST(test_v2_genre),
+#+        ID3_TEST(test_v1_basic),
+#+        ID3_TEST(test_v1_only_suppresses_v2),
+#+        ID3_TEST(test_v2_only_suppresses_v1),
+#+    };
+#+    return cmocka_run_group_tests(tests, NULL, NULL);
+#+}
+#Index: test/unit/test_parse_id3.c
+#===================================================================
+#--- test/unit/test_parse_id3.c	(nonexistent)
+#+++ test/unit/test_parse_id3.c	(revision 6562)
+#@@ -0,0 +1,137 @@
+#+/**
+#+ * @file
+#+ * @ingroup unit_tests
+#+ * @brief Unit test for the frontend ID3 dispatch in frontend/parse.c (SF #524).
+#+ *
+#+ * Drives the static id3_tag() entry point, which converts the argument and
+#+ * routes it to the encoding-specific set_id3v2tag_utf8() / set_id3v2tag_utf16()
+#+ * handlers. The UTF-8 path is where SF #524 lived (it used to feed UTF-8 data
+#+ * to the UTF-16/UCS-2 setters); these tests assert the UTF-8 text, comment and
+#+ * field-value cases produce the right frame, and that the UTF-16 path still
+#+ * works after the split.
+#+ *
+#+ * id3_tag() is static, so the translation unit is pulled in with @c \#include;
+#+ * parse_test_stubs.c supplies the frontend externs and libmp3lame provides the
+#+ * id3tag_* / lame_get_id3v2_tag API. id3_tag() converts via iconv, so inputs
+#+ * are kept ASCII (encoding-transparent) to stay locale-independent.
+#+ */
+#+
+#+#ifdef HAVE_CONFIG_H
+#+# include <config.h>
+#+#endif
+#+
+#+#include <stdarg.h>
+#+#include <stddef.h>
+#+#include <setjmp.h>
+#+#include <stdlib.h>
+#+#include <string.h>
+#+
+#+#include <cmocka.h>
+#+
+#+#include "parse.c"
+#+
+#+static unsigned char tagbuf[8192];
+#+
+#+/** @brief True if the byte string @p needle occurs verbatim in @p hay. */
+#+static int
+#+mem_contains(const unsigned char *hay, size_t hn, const char *needle)
+#+{
+#+    size_t nn = strlen(needle);
+#+    size_t i;
+#+    if (nn == 0 || nn > hn)
+#+        return 0;
+#+    for (i = 0; i + nn <= hn; ++i) {
+#+        if (memcmp(hay + i, needle, nn) == 0)
+#+            return 1;
+#+    }
+#+    return 0;
+#+}
+#+
+#+/** @brief A UTF-8 text tag routes to the correct frame (the #524 path). */
+#+static void
+#+test_utf8_text_frame(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    char   arg[] = "DispArtist";
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3_tag(gfp, 'a', TENC_UTF8, arg), 0);
+#+    sz = lame_get_id3v2_tag(gfp, tagbuf, sizeof tagbuf);
+#+    assert_true(mem_contains(tagbuf, sz, "TPE1"));
+#+    assert_true(mem_contains(tagbuf, sz, "DispArtist"));
+#+}
+#+
+#+/** @brief A UTF-8 comment routes to a COMM frame. */
+#+static void
+#+test_utf8_comment_frame(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    char   arg[] = "DispComment";
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3_tag(gfp, 'c', TENC_UTF8, arg), 0);
+#+    sz = lame_get_id3v2_tag(gfp, tagbuf, sizeof tagbuf);
+#+    assert_true(mem_contains(tagbuf, sz, "COMM"));
+#+    assert_true(mem_contains(tagbuf, sz, "DispComment"));
+#+}
+#+
+#+/** @brief A UTF-8 field value routes through id3tag_set_fieldvalue_utf8 (#524). */
+#+static void
+#+test_utf8_fieldvalue(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    char   arg[] = "TIT2=DispField";
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3_tag(gfp, 'v', TENC_UTF8, arg), 0);
+#+    sz = lame_get_id3v2_tag(gfp, tagbuf, sizeof tagbuf);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+    assert_true(mem_contains(tagbuf, sz, "DispField"));
+#+}
+#+
+#+/** @brief The UTF-16 path still works after the split (regression guard). */
+#+static void
+#+test_utf16_still_works(void **state)
+#+{
+#+    lame_t gfp = (lame_t) *state;
+#+    char   arg[] = "DispTitle";
+#+    size_t sz;
+#+    id3tag_add_v2(gfp);
+#+    assert_int_equal(id3_tag(gfp, 't', TENC_UTF16, arg), 0);
+#+    sz = lame_get_id3v2_tag(gfp, tagbuf, sizeof tagbuf);
+#+    assert_true(mem_contains(tagbuf, sz, "TIT2"));
+#+}
+#+
+#+/** @brief Per-test fixture: fresh lame_t into @p state. */
+#+static int
+#+setup_lame(void **state)
+#+{
+#+    lame_t gfp = lame_init();
+#+    if (gfp == NULL)
+#+        return -1;
+#+    *state = gfp;
+#+    return 0;
+#+}
+#+
+#+/** @brief Per-test fixture teardown: closes the lame_t. */
+#+static int
+#+teardown_lame(void **state)
+#+{
+#+    lame_close((lame_t) *state);
+#+    return 0;
+#+}
+#+
+#+#define ID3_TEST(f) cmocka_unit_test_setup_teardown(f, setup_lame, teardown_lame)
+#+
+#+/** @brief Registers and runs the frontend ID3-dispatch test group. */
+#+int
+#+main(void)
+#+{
+#+    const struct CMUnitTest tests[] = {
+#+        ID3_TEST(test_utf8_text_frame),
+#+        ID3_TEST(test_utf8_comment_frame),
+#+        ID3_TEST(test_utf8_fieldvalue),
+#+        ID3_TEST(test_utf16_still_works),
+#+    };
+#+    return cmocka_run_group_tests(tests, NULL, NULL);
+#+}

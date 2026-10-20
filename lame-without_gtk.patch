@@ -1,6 +1,5 @@
-diff -urNp -x '*.orig' lame-3.100.org/configure.in lame-3.100/configure.in
---- lame-3.100.org/configure.in	2023-12-09 13:09:15.432554115 +0100
-+++ lame-3.100/configure.in	2023-12-09 13:09:15.512555135 +0100
+--- lame-4.0.org/configure.ac	2023-12-09 13:09:15.432554115 +0100
++++ lame-4.0/configure.ac	2023-12-09 13:09:15.512555135 +0100
 @@ -440,7 +440,7 @@ CONFIG_MATH_LIB="${USE_LIBM}"
  
  dnl configure use of features
@@ -10,9 +9,8 @@ diff -urNp -x '*.orig' lame-3.100.org/configure.in lame-3.100/configure.in
  
  dnl ElectricFence malloc debugging
  AC_MSG_CHECKING(use of ElectricFence malloc debugging)
-diff -urNp -x '*.orig' lame-3.100.org/frontend/Makefile.am lame-3.100/frontend/Makefile.am
---- lame-3.100.org/frontend/Makefile.am	2011-10-16 15:09:01.000000000 +0200
-+++ lame-3.100/frontend/Makefile.am	2023-12-09 13:09:15.512555135 +0100
+--- lame-4.0/frontend/Makefile.am.orig	2020-07-11 11:43:53.000000000 +0200
++++ lame-4.0/frontend/Makefile.am	2026-10-20 06:20:13.363973091 +0200
 @@ -35,7 +35,7 @@ lame_SOURCES = lame_main.c $(common_sour
  mp3rtp_SOURCES = mp3rtp.c rtp.c $(common_sources)
  mp3x_SOURCES = mp3x.c gtkanal.c gpkplotting.c $(common_sources)
@@ -21,4 +19,4 @@ diff -urNp -x '*.orig' lame-3.100.org/frontend/Makefile.am lame-3.100/frontend/M
 +CFLAGS = @CFLAGS@ @FRONTEND_CFLAGS@ @SNDFILE_CFLAGS@
  LDFLAGS = @LDFLAGS@ @FRONTEND_LDFLAGS@ @SNDFILE_LIBS@
  
- INCLUDES = -I$(top_srcdir)/libmp3lame -I$(top_srcdir)/include -I$(top_builddir)
+ INCLUDES = @INCLUDES@ -I$(top_srcdir)/libmp3lame -I$(top_srcdir)/include \

@@ -1,7 +1,6 @@
-diff -urNp -x '*.orig' lame-3.100.org/configure.in lame-3.100/configure.in
---- lame-3.100.org/configure.in	2017-08-15 17:16:31.000000000 +0200
-+++ lame-3.100/configure.in	2023-12-09 13:08:16.736805434 +0100
-@@ -418,9 +418,10 @@ dnl Checks for libraries.
+--- lame-4.0/configure.ac.orig	2026-07-10 20:25:23.000000000 +0200
++++ lame-4.0/configure.ac	2026-10-20 06:18:39.467815104 +0200
+@@ -455,9 +455,10 @@ dnl Checks for libraries.
  
  AC_CHECK_HEADERS(termcap.h)
  AC_CHECK_HEADERS(ncurses/termcap.h)
@@ -12,6 +11,6 @@ diff -urNp -x '*.orig' lame-3.100.org/configure.in lame-3.100/configure.in
 +  AC_CHECK_LIB(ncurses, tgetent, HAVE_TERMCAP="ncurses", [
 +    AC_CHECK_LIB(curses, tgetent, HAVE_TERMCAP="curses", [
 +      AC_CHECK_LIB(termcap, tgetent, HAVE_TERMCAP="termcap")])])])
+ AC_CHECK_HEADERS(langinfo.h, AC_CHECK_FUNCS(nl_langinfo))
  
  AM_ICONV
- 

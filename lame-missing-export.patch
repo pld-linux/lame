@@ -1,0 +1,27 @@
+#Index: doc/html/history.html
+#===================================================================
+#--- doc/html/history.html	(revision 6563)
+#+++ doc/html/history.html	(revision 6564)
+#@@ -30,6 +30,9 @@
+# 	        Alexander Leidinger
+# 		<ul>
+# 		    <li>Add a cmocka based unit test infrastructur.</li>
+#+			    <li>Fixed linking the frontends against the shared
+#+			        library (<i>--enable-dynamic-frontends</i>). Bug
+#+			        ticket <i class="ticket">[ #515 ]</i>.</li>
+# 		</ul>
+#             </li>
+# 	</ul>
+Index: include/libmp3lame.sym
+===================================================================
+--- include/libmp3lame.sym	(revision 6563)
++++ include/libmp3lame.sym	(revision 6564)
+@@ -188,6 +188,8 @@
+ hip_set_errorf
+ hip_set_debugf
+ hip_set_msgf
++hip_set_pinfo
++hip_finish_pinfo
+ hip_decode
+ hip_decode_headers
+ hip_decode1

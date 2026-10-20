@@ -1,0 +1,8 @@
+--- lame-4.0/libmp3lame/lame.pc.in.orig	2023-11-21 15:02:40.000000000 +0100
++++ lame-4.0/libmp3lame/lame.pc.in	2026-10-20 21:20:26.308026518 +0200
+@@ -7,4 +7,5 @@ Name: @PACKAGE_NAME@
+ Description: high quality MPEG Audio Layer III (MP3) encoder library
+ Version: @PACKAGE_VERSION@
+ Libs: -L${libdir} -lmp3lame
++Libs.private: @LIBMP3LAME_LDADD@ @CONFIG_MATH_LIB@
+ Cflags: -I${includedir}/lame
